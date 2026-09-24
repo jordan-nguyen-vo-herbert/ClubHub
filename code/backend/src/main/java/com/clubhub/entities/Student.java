@@ -1,21 +1,33 @@
 package main.java.com.clubhub.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Student {
-    private long id;
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
     private String name;
     private String email;
-    private String password; // will probably need to make this a hashed password for security
+    // will need enum for major
+    private String password; 
 
-    public Student(long id, String name, String email, String password) {
+    // Usage of default constructor  Java persistence API (JPA)
+    protected Student() {}
+
+    public Student(Long id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        // List of clubs the student is a member of
+        // List of clubs the student is a member of -> would need to update resource controller and record
     }
 
     // Returns the student's ID
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -29,7 +41,7 @@ public class Student {
         return email;
     }
 
-    // Returns the student's password for security reasons, this might be hashed)
+    // Returns the student's password for security reasons, this might be hashed
     public String getPassword() {
         return password;
     }

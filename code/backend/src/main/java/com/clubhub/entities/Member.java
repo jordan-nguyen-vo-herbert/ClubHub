@@ -3,11 +3,25 @@ package com.clubhub.entities;
 
 public class Member {
     private Long studentID;
-    private String clubName;
-    // Might need roll
+    private Long clubID; // may need to change to clubID
+    private ClubRole role;
+    // Might need status
 
-    public Member(Long studentID, String clubName) {
+    public Member(Long studentID, Long clubID, ClubRole role) {
         this.studentID = studentID;
-        this.clubName = clubName;
+        this.clubID = clubID;
+        this.role = role;
+    }
+
+    public Long getStudentID() {
+        return this.studentID;
+    }
+
+    public Long clubName() {
+        return this.clubID;
+    }
+
+    public String getRole() {
+        return this.role.getRole();
     }
 }

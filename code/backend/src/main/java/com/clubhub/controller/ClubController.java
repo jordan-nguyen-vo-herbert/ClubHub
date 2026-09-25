@@ -17,7 +17,7 @@ public class ClubController {
     @GetMapping("/clubs/{clubID}")
     public ClubResponse getClubResponse (@PathVariable Long clubID) {
         // now we need to find it 
-        Optional<Club> query = clubRepository.findById(clubID);
-        return new ClubResponse(query.getClubID(), query.getClubName(), query.getMembers());
+        Optional<Club> query = clubRepository.findById(clubID); // optional in case no results
+        return new ClubResponse(query.getClubID(), query.getClubName(), query.getMembers()); // need to handle how the code behaves here, see StudentController for more details
     }
 }

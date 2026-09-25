@@ -1,0 +1,21 @@
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+package com.clubhub.controller;
+
+import com.clubhub.dto.ClubResponse;
+import com.clubhub.repository.ClubRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ClubController {
+   private ClubRepository clubRepository;
+
+   public ClubController() {
+   }
+
+   @GetMapping({"/clubs/{clubID}"})
+   public ClubResponse getClubResponse(@PathVariable Long clubID) {
+      throw new Error("Unresolved compilation problems: \n\tThe method getClubID() is undefined for the type Optional<Club>\n\tThe method getClubName() is undefined for the type Optional<Club>\n\tThe method getMembers() is undefined for the type Optional<Club>\n");
+   }
+}

@@ -15,9 +15,13 @@ public class StudentController {
     private StudentRepository studentRepository;
     @GetMapping("/students/{id}") // Maps the endpoint to the URL path "/students"
     public StudentResponse getStudentResponse(@PathVariable Long id) { // uses id of type long to identify the student 
-        
-        // Need to be able to find and identify student from respository
-        Optional<Student> query = studentRepository.findById(id); // using optional if no result found, but creates issue within function calls
-        return new StudentResponse(query.getStudentID(), query.getName(), query.getEmail()); // Optional caused issue, need to iron out this logic
+        Optional<Student> query = studentRepository.findById(id);
+        if (!query.isPresent()) {
+            // this will need to be fixed, either HTTP 404, or not found page
+            query.orElseThrow(()-> new RuntimeException("Student not found")); 
+        }
+        // have a match, can return
+        Student match = query.get();
+        return new StudentResponse(match.getStudentID(), match.getName(), match.getEmail());
     }
 }

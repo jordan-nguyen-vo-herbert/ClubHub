@@ -10,10 +10,15 @@ public class Student {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-    private String name;
+    private String name; // will need to refactor to include last name
     private String email;
     // will need enum for major
     private String password; 
+
+    // Potential Fields
+    // Gender
+    // List of Joined Clubs
+    // // date birth -> age -> DOB
 
     // Usage of default constructor  Java persistence API (JPA)
     protected Student() {}
@@ -45,4 +50,6 @@ public class Student {
     public String getPassword() {
         return password;
     }
+
+    // Potentially function to change name
 }

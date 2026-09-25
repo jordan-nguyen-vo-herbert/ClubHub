@@ -47,11 +47,12 @@ public class Club {
         return this.clubName;
     }
 
-    public List<Member> getMembers() {
-        return new ArrayList<>(this.members);
-    }
 
     public String getDateApproved() {
         return this.dateApproved.toString();
+    }
+
+    public List<Member> getMembers() {
+        return new ArrayList<>(this.members);
     }
 }

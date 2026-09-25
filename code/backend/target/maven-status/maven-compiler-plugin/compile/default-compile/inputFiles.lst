@@ -4,6 +4,8 @@
 /Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/controller/StudentController.java
 /Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/entities/Student.java
 /Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/repository/StudentRepository.java
+/Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/entities/ClubRole.java
 /Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/entities/Club.java
 /Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/entities/Member.java
 /Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/controller/ClubController.java
+/Users/jordanherbert/ClubHub/code/backend/src/main/java/com/clubhub/dto/MemberResponse.java

@@ -1,5 +1,6 @@
 package com.clubhub.controller; // need to figure this out
 import com.clubhub.dto.ClubResponse; // need to figure this out
+import com.clubhub.dto.StudentResponse;
 import com.clubhub.repository.ClubRepository; // need to figure this out
 import com.clubhub.entities.Club;
 import java.util.Optional;
@@ -18,6 +19,10 @@ public class ClubController {
     public ClubResponse getClubResponse (@PathVariable Long clubID) {
         // now we need to find it 
         Optional<Club> query = clubRepository.findById(clubID); // optional in case no results
-        return new ClubResponse(query.getClubID(), query.getClubName(), query.getMembers()); // need to handle how the code behaves here, see StudentController for more details
+        if (!query.isPresent()) {
+            query.orElseThrow(); // this will need to be fixed, returns IllegalArgumentException and will break
+        }
+        Club match = query.get();
+        return new ClubResponse(match.getClubID(), match.getClubName(), match.getMembers());
     }
 }

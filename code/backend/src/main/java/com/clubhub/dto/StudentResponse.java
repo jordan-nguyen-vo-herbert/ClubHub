@@ -1,7 +1,7 @@
-package main.java.com.clubhub.entities; // might need to check the path on this one
+package com.clubhub.dto; // need to figure this out
 
 public record StudentResponse(
-    Long id,
+    Long studentID,
     String name,
     String email
 ) {}

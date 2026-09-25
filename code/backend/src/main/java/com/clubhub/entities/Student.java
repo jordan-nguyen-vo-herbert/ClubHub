@@ -1,4 +1,4 @@
-package main.java.com.clubhub.entities;
+package com.clubhub.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +27,7 @@ public class Student {
     }
 
     // Returns the student's ID
-    public Long getId() {
+    public Long getStudentID() {
         return id;
     }
 

@@ -1,6 +1,10 @@
+package com.clubhub.entities;
+import com.clubhub.entities.Member;
 import java.lang.annotation.Inherited;
-
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +26,7 @@ public class Club {
     
     // 
     protected Club() {}
-    public Club(Long clubID, String clubName, Date dateApproved, List<Members> members) {
+    public Club(Long clubID, String clubName, Date dateApproved, List<Member> members) {
         this.clubID = clubID;
         this.dateApproved = dateApproved;
         this.members = new ArrayList<>(members);
@@ -30,5 +34,17 @@ public class Club {
 
     public void addMember(Long studentID) {
         members.add(new Member(studentID, this.clubName)); // problem is creating a new member object everytime, maybe change
+    }
+
+    public Long getClubID() {
+        return this.clubID;
+    }
+
+    public String getClubName() {
+        return this.clubName;
+    }
+
+    public List<Member> getMembers() {
+        return new ArrayList<>(this.members);
     }
 }

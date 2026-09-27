@@ -13,7 +13,7 @@
     </parent>
 
     <groupId>com.clubhub</groupId>
-    <artifactId>backend</artifactId>
+    <artifactId>clubhub</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

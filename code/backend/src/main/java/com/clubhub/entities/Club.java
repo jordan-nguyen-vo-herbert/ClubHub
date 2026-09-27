@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 
 
@@ -19,6 +20,7 @@ public class Club {
     private Long clubID;
     private String clubName;
     private Date dateApproved;
+    @OneToMany 
     private List<Member> members;
     // private Map<ClubRole, List<Member>> roleToMember;
     // Potential Fields

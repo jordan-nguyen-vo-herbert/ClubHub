@@ -10,7 +10,7 @@ public class Student {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-    private String name; // will need to refactor to include last name
+    private String lastName;
     private String email;
     // will need enum for major
     private String password; 
@@ -23,9 +23,9 @@ public class Student {
     // Usage of default constructor  Java persistence API (JPA)
     protected Student() {}
 
-    public Student(Long id, String name, String email, String password) {
+    public Student(Long id, String lastName, String email, String password) {
         this.id = id;
-        this.name = name;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         // List of clubs the student is a member of -> would need to update resource controller and record
@@ -36,9 +36,9 @@ public class Student {
         return id;
     }
 
-    // Returns the student's name
-    public String getName() {
-        return name;
+    // Returns the student's last name
+    public String getLastName() {
+        return lastName;
     }
 
     // Returns the student's email address

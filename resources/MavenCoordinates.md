@@ -9,10 +9,10 @@ each one means.
 | Field        | What it is                                  | ClubHub value  |
 |--------------|---------------------------------------------|----------------|
 | `groupId`    | Who owns the project (like a namespace)     | `com.clubhub`  |
-| `artifactId` | The name of this specific project           | `clubhub`      |
+| `artifactId` | The name of this specific project           | `backend`      |
 | `version`    | Which release of it this is                 | `1.0-SNAPSHOT` |
 
-Written together they look like `com.clubhub:clubhub:1.0-SNAPSHOT`.
+Written together they look like `com.clubhub:backend:1.0-SNAPSHOT`.
 
 - **groupId** is usually a reversed domain name (`org.springframework.boot`,
   `com.h2database`). It groups related projects by the same owner.
@@ -25,8 +25,8 @@ Written together they look like `com.clubhub:clubhub:1.0-SNAPSHOT`.
 It names the file Maven builds. When you run `./mvnw package`, you get:
 
 ```
-target/clubhub-1.0-SNAPSHOT.jar
-        └─artifactId─┘└version─┘
+target/backend-1.0-SNAPSHOT.jar
+        └artifactId┘└version─┘
 ```
 
 That's it. It's a label for the build output.
@@ -44,11 +44,13 @@ two separate systems that just happen to look similar:
 
 The package line and the folder path must match each other
 (`package com.clubhub.controller;` lives in `src/main/java/com/clubhub/controller/`).
-The groupId/artifactId don't have to match either of them. ClubHub keeps them
-similar (`com.clubhub`) only because it's easier to read.
+The groupId/artifactId don't have to match either of them. ClubHub's groupId is
+`com.clubhub` to mirror the package name, but that's only for readability. The
+artifactId `backend` describes which part of the repo this is, since the repo
+also has a `code/frontend/`.
 
-So renaming the artifactId from `backend` to `clubhub` changed the jar name and
-nothing else. No Java files needed to change.
+So renaming the artifactId (say, from `backend` to `clubhub`) would only change the
+jar name. No Java files would need to change.
 
 ## Same coordinates, used for dependencies
 

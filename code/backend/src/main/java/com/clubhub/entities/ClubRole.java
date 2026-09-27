@@ -1,7 +1,5 @@
 package com.clubhub.entities;
-import jakarta.persistence.Entity;
 
-@Entity
 public enum ClubRole {
     PRESIDENT("President"),
     VICEPRESIDENT("Vice President"),

@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController // Tells Spring that this is handles API endpoint for student-related requests
 public class StudentController {
     private StudentRepository studentRepository;
+    public StudentController() {
+        
+    }
     @GetMapping("/students/{id}") // Maps the endpoint to the URL path "/students"
     public StudentResponse getStudentResponse(@PathVariable Long id) { // uses id of type long to identify the student 
         Optional<Student> query = studentRepository.findById(id);

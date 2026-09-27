@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -14,6 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 public class ClubController {
     private ClubRepository clubRepository;
+    
+    public ClubController(ClubRepository clubRepository) {
+        this.clubRepository = clubRepository;
+    }
+
     // need a method that tells Springboot that this is the method associated with GET request
     @GetMapping("/clubs/{clubID}")
     public ClubResponse getClubResponse (@PathVariable Long clubID) {

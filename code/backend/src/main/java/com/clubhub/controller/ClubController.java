@@ -32,3 +32,15 @@ public class ClubController {
         return new ClubResponse(match.getClubID(), match.getClubName(), match.getMembers());
     }
 }
+
+// yohann: temp practice controller
+@Controller
+public class HomeController{
+    @GetMapping("/")
+    public String home(Model model){
+        model.addAttribute("features", Arrays.asList(
+            "feature 1", "feature etc"
+        ));
+        return "index";
+    }
+}

@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Spring Boot ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <header>
+        empty
+    </header>
+    <section>
+        <h2>
+            temp title
+
+            <a href="https://github.com/jordan-nguyen-vo-herbert/ClubHub"
+                target="_blank"> github repo</a>
+        </h2>
+        <h3>
+            blah blah
+        </h3>
+        <ul
+            th:each="item: ${features}">
+                <li th:text="${item}"/>
+        </ul>
+    </section>
+    <footer>
+        <p>Jordan Herbert, Yohann Sharma, Tirth Shah, Daniel Diyali</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,14 @@
+package com.clubhub.controller;
+import java.util.List;
+
+// yohann: temp practice controller
+@Controller
+public class HomeController{
+    @GetMapping("/")
+    public String home(Model model){ // need to make this entity later
+        model.addAttribute("features", Arrays.asList(
+            "feature 1", "feature etc"
+        ));
+        return "index";
+    }
+}

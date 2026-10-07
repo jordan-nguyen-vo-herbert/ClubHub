@@ -1,8 +1,11 @@
 package com.clubhub.dto;
 import com.clubhub.entities.ClubRole;
 
+// Only the student's ID and name, not the whole Student entity (which has the password)
 public record MemberResponse(
     Long studentID,
-    Long clubID, // may need to change to clubID
+    String firstName,
+    String lastName,
+    Long clubID,
     ClubRole role
 ){}

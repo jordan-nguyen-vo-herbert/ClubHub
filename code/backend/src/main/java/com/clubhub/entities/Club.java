@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,8 +21,9 @@ public class Club {
     private Long clubID;
     private String clubName;
     private Date dateApproved;
-    @OneToMany 
-    private List<Member> members;
+    // mappedBy: the Member side owns the link (Member.club), cascade saves new members when the club is saved
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
+    private List<Member> members = new ArrayList<>();
     // private Map<ClubRole, List<Member>> roleToMember;
     // Potential Fields
         // private int studentFounderID;
@@ -31,14 +33,15 @@ public class Club {
     // 
     protected Club() {}
 
-    public Club(Long clubID, String clubName, Date dateApproved, List<Member> members) {
-        this.clubID = clubID;
+    // No id parameter, the database generates it, members are added with addMember
+    public Club(String clubName, Date dateApproved) {
+        this.clubName = clubName;
         this.dateApproved = dateApproved;
-        this.members = new ArrayList<>(members);
     }
 
-    public void addMember(Long studentID, ClubRole role) {
-        members.add(new Member(studentID, this.clubID, role)); // problem is creating a new member object everytime, maybe change
+    // Creates the membership, saved to the database when the club is saved
+    public void addMember(Student student, ClubRole role) {
+        members.add(new Member(student, this, role));
     }
 
     public Long getClubID() {

@@ -2,29 +2,31 @@ package com.clubhub.controller;
 import com.clubhub.dto.StudentResponse; // need to figure this out
 import com.clubhub.repository.StudentRepository;
 import com.clubhub.entities.Student; // need to figure this out
-import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 
 
-@RestController // Tells Spring that this is handles API endpoint for student-related requests
+@Controller // Tells Spring that this handles student-related requests and returns Thymeleaf pages
 public class StudentController {
     private StudentRepository studentRepository;
     public StudentController(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
-    @GetMapping("/students/{id}") // Maps the endpoint to the URL path "/students"
-    public StudentResponse getStudentResponse(@PathVariable Long id) { // uses id of type long to identify the student 
-        Optional<Student> query = studentRepository.findById(id);
-        if (!query.isPresent()) {
-            // this will need to be fixed, either HTTP 404, or not found page
-            query.orElseThrow(()-> new RuntimeException("Student not found")); 
-        }
-        // have a match, can return
-        Student match = query.get();
-        return new StudentResponse(match.getStudentID(), match.getLastName(), match.getEmail());
+    @GetMapping("/students/{id}") // Maps the endpoint to the URL path "/students/{id}"
+    public String studentProfile(@PathVariable Long id, Model model) { // uses id of type long to identify the student
+        // No match -> HTTP 404, Spring shows templates/error/404.html
+        Student match = studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        // have a match, copy the safe fields into the DTO (no password)
+        StudentResponse student = new StudentResponse(match.getStudentID(), match.getFirstName(), match.getLastName(),
+                match.getEmail(), match.getMajor(), match.getGender(), match.getPronouns());
+        model.addAttribute("student", student); // available in the template as ${student}
+        return "student-profile"; // renders templates/student-profile.html
     }
 }

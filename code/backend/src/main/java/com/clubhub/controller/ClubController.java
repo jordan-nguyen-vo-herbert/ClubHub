@@ -30,7 +30,7 @@ public class ClubController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Club not found"));
         // copy each membership into a DTO, so the template never sees the Student entity (password)
         List<MemberResponse> members = match.getMembers().stream()
-                .map(m -> new MemberResponse(m.getStudent().getStudentID(), m.getStudent().getFirstName(),
+                .map(m -> new MemberResponse(m.getStudent().getId(), m.getStudent().getFirstName(),
                         m.getStudent().getLastName(), match.getClubID(), m.getRole()))
                 .toList();
         ClubResponse club = new ClubResponse(match.getClubID(), match.getClubName(), members);

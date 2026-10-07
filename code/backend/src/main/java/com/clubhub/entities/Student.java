@@ -2,6 +2,7 @@ package com.clubhub.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,7 +14,10 @@ import jakarta.persistence.Id;
 public class Student {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
+    private Long id; // database ID, used in URLs, never shown to users
+    // The WSU ID the student enters, String because it can start with 0 and we never do math on it
+    @Column(unique = true, nullable = false)
+    private String studentNumber;
     private String firstName;
     private String lastName;
     private String email;
@@ -38,8 +42,9 @@ public class Student {
     protected Student() {}
 
     // No id parameter, the database generates it
-    public Student(String firstName, String lastName, String email, String major,
+    public Student(String studentNumber, String firstName, String lastName, String email, String major,
                    Gender gender, Pronouns pronouns, String password) {
+        this.studentNumber = studentNumber;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -50,9 +55,14 @@ public class Student {
         // List of clubs the student is a member of -> would need to update resource controller and record
     }
 
-    // Returns the student's ID
-    public Long getStudentID() {
+    // Returns the database ID (not the WSU ID)
+    public Long getId() {
         return id;
+    }
+
+    // Returns the student's WSU ID, keep off public pages
+    public String getStudentNumber() {
+        return studentNumber;
     }
 
     // Returns the student's first name

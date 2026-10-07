@@ -57,4 +57,7 @@ public class ClubController {
         model.addAttribute("clubForm", newForm);
         return "clubForm";
     }
+
+    // FR: ClubSearch will be implemented by October 12th
+    // Lets students search for clubs by name or area of interest
 }

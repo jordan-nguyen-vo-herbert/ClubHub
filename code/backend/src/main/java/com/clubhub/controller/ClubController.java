@@ -43,7 +43,7 @@ public class ClubController {
         return "club"; // renders templates/club.html
     }
 
-    // Copies a Club entity into the DTO, shared by the club page and (soon) ClubSearch
+    // Copies a Club entity into the DTO, shared by the club page and ClubSearch
     private ClubResponse toClubResponse(Club club) {
         // copy each membership into a DTO, so the template never sees the Student entity (password)
         List<MemberResponse> members = club.getMembers().stream()
@@ -66,8 +66,7 @@ public class ClubController {
         return "clubForm";
     }
 
-    // FR: ClubSearch will be implemented by October 12th
-    // Lets students search for clubs by name or area of interest
+    // FR: ClubSearch, lets students search for clubs by name or area of interest
 
     @GetMapping("/clubs/search/name") // GET: e.g. /clubs/search/name?name=chess
     public String searchByName(@RequestParam String name, Model model) { // name comes from ?name=... in the URL

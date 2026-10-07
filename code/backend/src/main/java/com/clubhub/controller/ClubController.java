@@ -79,11 +79,11 @@ public class ClubController {
         return "clubs"; // renders templates/clubs.html (Yohann)
     }
 
-    @GetMapping("/clubs/search/area") // GET: e.g. /clubs/search/area?area=SPORTS
-    public String searchByArea(@RequestParam AreaOfInterest area, Model model) { // Spring converts "SPORTS" to AreaOfInterest.SPORTS
+    @GetMapping("/clubs/search/area") // GET: e.g. /clubs/search/area?area=BUSINESS
+    public String searchByArea(@RequestParam AreaOfInterest area, Model model) { // Spring converts "BUSINESS" to AreaOfInterest.BUSINESS
         List<Club> found = clubRepository.findByAreaOfInterest(area); // matching Club entities
         List<ClubResponse> clubs = new ArrayList<>();
-        for (Club club : found) {
+        for (Club club : found) { // for every club found, add to result
             clubs.add(toClubResponse(club)); // convert each Club to a DTO (no Student entities/passwords)
         }
         model.addAttribute("clubs", clubs); // available in the template as ${clubs}

@@ -25,7 +25,7 @@ public class Club {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long clubID;
     private String clubName;
-    // EnumType.STRING stores the name ("ACADEMIC"), not the position, so reordering the enum is safe
+    // EnumType.STRING stores the name ("BUSINESS"), not the position, so reordering the enum is safe
     @Enumerated(EnumType.STRING)
     private AreaOfInterest areaOfInterest;
     @Column(length = 1000) // default is 255 characters, too short for a description

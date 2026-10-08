@@ -5,6 +5,8 @@ import com.clubhub.dto.ClubResponse;
 import com.clubhub.dto.MemberResponse;
 import com.clubhub.entities.AreaOfInterest;
 import com.clubhub.entities.Club;
+import com.clubhub.entities.ClubRole;
+import com.clubhub.entities.Member;
 import com.clubhub.entities.Student; // for the founder lookup in clubFormSubmit
 import com.clubhub.repository.ClubRepository;
 import com.clubhub.repository.StudentRepository;
@@ -46,10 +48,11 @@ public class ClubController {
     // Copies a Club entity into the DTO, shared by the club page and ClubSearch
     private ClubResponse toClubResponse(Club club) {
         // copy each membership into a DTO, so the template never sees the Student entity (password)
-        List<MemberResponse> members = club.getMembers().stream()
-                .map(m -> new MemberResponse(m.getStudent().getId(), m.getStudent().getFirstName(),
-                        m.getStudent().getLastName(), club.getClubID(), m.getRole()))
-                .toList();
+        List<MemberResponse> members = new ArrayList<>();
+        for (Member m : club.getMembers()) {
+            members.add(new MemberResponse(m.getStudent().getId(), m.getStudent().getFirstName(),
+                    m.getStudent().getLastName(), club.getClubID(), m.getRole()));
+        }
         return new ClubResponse(club.getClubID(), club.getClubName(), club.getAreaOfInterest(),
                 club.getStatus(), members);
     }
@@ -61,9 +64,14 @@ public class ClubController {
     }
     
     @PostMapping("/clubForm")
-    public String clubFormSubmit(@ModelAttribute ClubForm newForm, Model model) {
-        model.addAttribute("clubForm", newForm);
-        return "clubForm";
+    public String clubFormSubmit(@ModelAttribute ClubForm newForm) {
+        // No student with that WSU ID -> HTTP 400 instead of a generic 500
+        Student founder = studentRepository.findByStudentNumber(newForm.getFounderStudentNumber())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No student with that WSU ID"));
+        Club club = new Club(newForm.getClubName(), newForm.getAreaOfInterest(), newForm.getDescription(), founder);
+        club.addMember(founder, ClubRole.PRESIDENT); // founder is the first member, saved along with the club (cascade)
+        Club saved = clubRepository.save(club); // database assigns the clubID
+        return "redirect:/clubs/" + saved.getClubID(); // browser loads the new club's page
     }
 
     // FR: ClubSearch, lets students search for clubs by name or area of interest

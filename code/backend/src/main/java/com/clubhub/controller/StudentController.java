@@ -41,10 +41,16 @@ public class StudentController {
     }
 
     @PostMapping("/studentForm") // POST: user clicks submit on the form
-    public String studentFormSubmit(@ModelAttribute StudentForm newForm, Model model) { // Spring calls new StudentForm() then the setters with the submitted values
-        model.addAttribute("studentForm", newForm); // put the filled form back, so the page shows what was entered
-        // TODO: build a Student from newForm, studentRepository.save(...), then return "redirect:/students/" + saved id
-        return "studentForm"; // shows the same form page again for now
+    public String studentFormSubmit(@ModelAttribute StudentForm form) {
+        // 1. Convert: form DTO -> entity (Student has no setters, so use the constructor)
+        Student student = new Student(form.getStudentNumber(), form.getFirstName(), form.getLastName(),
+                form.getEmail(), form.getMajor(), form.getGender(), form.getPronouns(), form.getPassword());
+
+        // 2. Save: the database assigns the id, save() returns the stored copy with it filled in
+        Student saved = studentRepository.save(student);
+
+        // 3. Redirect: send the browser to the new profile page
+        return "redirect:/students/" + saved.getId();
     }
 
 }

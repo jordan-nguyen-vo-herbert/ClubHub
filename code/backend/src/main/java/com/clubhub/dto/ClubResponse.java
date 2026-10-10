@@ -9,6 +9,7 @@ public record ClubResponse (
     Long clubID,
     String clubName,
     AreaOfInterest areaOfInterest,
+    String description,
     ClubStatus status,
     List<MemberResponse> members
 ) {}

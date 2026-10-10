@@ -13,10 +13,12 @@ import com.clubhub.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +35,13 @@ public class ClubController {
     public ClubController(ClubRepository clubRepository, StudentRepository studentRepository) { // Spring passes in both repositories automatically
         this.clubRepository = clubRepository;
         this.studentRepository = studentRepository;
+    }
+
+    // Dropdown options for the club form and the area search, available in the template as ${areaOptions}
+    // Spring runs this before every request in this controller, so the list is there even when a form is shown again with errors
+    @ModelAttribute("areaOptions")
+    public AreaOfInterest[] areaOptions() {
+        return AreaOfInterest.values(); // every area, in the order they're declared in the enum
     }
 
     // tells Springboot that this is the method associated with GET request
@@ -54,7 +63,7 @@ public class ClubController {
                     m.getStudent().getLastName(), club.getClubID(), m.getRole()));
         }
         return new ClubResponse(club.getClubID(), club.getClubName(), club.getAreaOfInterest(),
-                club.getStatus(), members);
+                club.getDescription(), club.getStatus(), members);
     }
 
     @GetMapping("/clubForm")
@@ -64,17 +73,28 @@ public class ClubController {
     }
     
     @PostMapping("/clubForm")
-    public String clubFormSubmit(@ModelAttribute ClubForm newForm) {
-        // No student with that WSU ID -> HTTP 400 instead of a generic 500
-        Student founder = studentRepository.findByStudentNumber(newForm.getFounderStudentNumber())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No student with that WSU ID"));
-        Club club = new Club(newForm.getClubName(), newForm.getAreaOfInterest(), newForm.getDescription(), founder);
-        club.addMember(founder, ClubRole.PRESIDENT); // founder is the first member, saved along with the club (cascade)
+    public String clubFormSubmit(@ModelAttribute ClubForm newForm, BindingResult result) { // result holds form errors, must come right after the form
+        // No student with that WSU ID -> attach an error to the founder field instead of failing the whole request
+        Optional<Student> founder = studentRepository.findByStudentNumber(newForm.getFounderStudentNumber());
+        if (founder.isEmpty()) {
+            result.rejectValue("founderStudentNumber", "notFound", "No student profile found with this WSU ID");
+        }
+        // Any error (founder missing, or a value Spring couldn't convert) -> show the form again with what they typed
+        if (result.hasErrors()) {
+            return "clubForm"; // the template shows the message with th:errors="*{founderStudentNumber}"
+        }
+        Club club = new Club(newForm.getClubName(), newForm.getAreaOfInterest(), newForm.getDescription(), founder.get());
+        club.addMember(founder.get(), ClubRole.PRESIDENT); // founder is the first member, saved along with the club (cascade)
         Club saved = clubRepository.save(club); // database assigns the clubID
         return "redirect:/clubs/" + saved.getClubID(); // browser loads the new club's page
     }
 
     // FR: ClubSearch, lets students search for clubs by name or area of interest
+
+    @GetMapping("/clubs/search") // GET: the search page before any search, so the forms and area dropdown have a page to live on
+    public String searchPage() {
+        return "clubs"; // renders templates/clubs.html, ${clubs} is missing until the user searches
+    }
 
     @GetMapping("/clubs/search/name") // GET: e.g. /clubs/search/name?name=chess
     public String searchByName(@RequestParam String name, Model model) { // name comes from ?name=... in the URL

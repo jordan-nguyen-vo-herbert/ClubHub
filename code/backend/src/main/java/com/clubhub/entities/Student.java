@@ -60,7 +60,7 @@ public class Student {
         return id;
     }
 
-    // Returns the student's WSU ID, keep off public pages
+    // Returns the student's WSU ID, shown on the profile page
     public String getStudentNumber() {
         return studentNumber;
     }

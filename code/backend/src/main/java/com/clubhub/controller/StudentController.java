@@ -30,7 +30,7 @@ public class StudentController {
         Student match = studentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
         // have a match, copy the safe fields into the DTO (no password)
-        StudentResponse student = new StudentResponse(match.getId(), match.getFirstName(), match.getLastName(),
+        StudentResponse student = new StudentResponse(match.getId(), match.getStudentNumber(), match.getFirstName(), match.getLastName(),
                 match.getEmail(), match.getMajor(), match.getGender(), match.getPronouns());
 
         model.addAttribute("student", student); // available in the template as ${student}

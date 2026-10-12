@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Search Clubs - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <section>
+        <h1>Search Clubs</h1>
+        <!--/* method="get" puts the search in the URL, e.g. /clubs/search/name?name=chess */-->
+        <form th:action="@{/clubs/search/name}" method="get">
+            <div>
+                <label for="name">Club name</label>
+                <!--/* ${param.name} keeps what the user typed after the search */-->
+                <input type="text" id="name" name="name" th:value="${param.name}" />
+            </div>
+            <button type="submit">Search by name</button>
+        </form>
+        <form th:action="@{/clubs/search/area}" method="get">
+            <div>
+                <label for="area">Area of interest</label>
+                <select id="area" name="area" required>
+                    <option value="">-- Select --</option>
+                    <option th:each="a : ${areaOptions}" th:value="${a}" th:text="${a.area}"
+                            th:selected="${#strings.toString(param.area) == a.name()}">Area</option>
+                </select>
+            </div>
+            <button type="submit">Search by area</button>
+        </form>
+
+        <!--/* ${clubs} is missing until the user searches, so nothing shows on first load */-->
+        <div th:if="${clubs != null}">
+            <h2>Results</h2>
+            <p th:if="${#lists.isEmpty(clubs)}">No results found</p>
+            <ul th:unless="${#lists.isEmpty(clubs)}">
+                <li th:each="club : ${clubs}">
+                    <a th:href="@{/clubs/{id}(id=${club.clubID})}" th:text="${club.clubName}">Club Name</a>
+                    - <span th:text="${club.areaOfInterest.area}">Area</span>
+                </li>
+            </ul>
+        </div>
+        <a th:href="@{/}">Back to home</a>
+    </section>
+</body>
+</html>

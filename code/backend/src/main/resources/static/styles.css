@@ -18,16 +18,20 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
     width: 100%;
     padding: 8px;
     border: 1px solid #999;
     border-radius: 4px;
     box-sizing: border-box;
+    font-family: inherit;
     font-size: 1rem;
 }
 
 button {
+    display: block;
+    margin-bottom: 16px;
     padding: 10px 16px;
     border: none;
     border-radius: 4px;

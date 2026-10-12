@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Register Club - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <section>
+        <h1>Register a Club</h1>
+        <!--/* th:object binds the form to ${clubForm}, each *{field} must match a field in ClubForm.java */-->
+        <form th:action="@{/clubForm}" th:object="${clubForm}" method="post">
+            <div>
+                <label for="clubName">Club name</label>
+                <input type="text" th:field="*{clubName}" required />
+            </div>
+            <div>
+                <label for="areaOfInterest">Area of interest</label>
+                <select th:field="*{areaOfInterest}" required>
+                    <option value="">-- Select --</option>
+                    <option th:each="a : ${areaOptions}" th:value="${a}" th:text="${a.area}">Area</option>
+                </select>
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <!--/* maxlength matches the 1000 character column in Club.java */-->
+                <textarea th:field="*{description}" rows="5" maxlength="1000" required></textarea>
+            </div>
+            <div>
+                <label for="founderStudentNumber">Founder's WSU ID</label>
+                <input type="text" th:field="*{founderStudentNumber}" required />
+                <!--/* Only rendered when the controller finds no student with this WSU ID */-->
+                <p class="error" th:if="${#fields.hasErrors('founderStudentNumber')}" th:errors="*{founderStudentNumber}">WSU ID error</p>
+            </div>
+            <button type="submit">Register club</button>
+        </form>
+        <a th:href="@{/}">Back to home</a>
+    </section>
+</body>
+</html>

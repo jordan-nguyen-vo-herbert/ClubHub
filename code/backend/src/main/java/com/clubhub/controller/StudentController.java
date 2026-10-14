@@ -7,6 +7,8 @@ import com.clubhub.entities.Pronouns;
 import com.clubhub.entities.Student;
 import com.clubhub.repository.StudentRepository;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,7 +58,7 @@ public class StudentController {
     }
 
     @PostMapping("/studentForm") // POST: user clicks submit on the form
-    public String studentFormSubmit(@ModelAttribute StudentForm form, BindingResult result) { // result holds form errors, must come right after the form
+    public String studentFormSubmit(@ModelAttribute StudentForm form, BindingResult result, HttpSession session) { // result holds form errors, must come right after the form; session is this browser's session
         // WSU ID already taken -> attach an error to the WSU ID field instead of crashing on save (studentNumber is unique)
         // May need to handle this later as offering password reset 
         if (studentRepository.findByStudentNumber(form.getStudentNumber()).isPresent()) {
@@ -75,8 +77,20 @@ public class StudentController {
         // 2. Save: the database assigns the id, save() returns the stored copy with it filled in
         Student saved = studentRepository.save(student);
 
-        // 3. Redirect: send the browser to the new profile page
+        // 3. Remember who this browser belongs to, until login exists (read by myProfile below)
+        session.setAttribute("studentId", saved.getId());
+
+        // 4. Redirect: send the browser to the new profile page
         return "redirect:/students/" + saved.getId();
+    }
+
+    @GetMapping("/profile") // GET: the "My student profile" link on the home page
+    public String myProfile(HttpSession session) {
+        Long id = (Long) session.getAttribute("studentId"); // null if this browser hasn't created a profile
+        if (id != null && studentRepository.existsById(id)) {
+            return "redirect:/students/" + id;
+        }
+        return "no-profile"; // renders templates/no-profile.html
     }
 
 }

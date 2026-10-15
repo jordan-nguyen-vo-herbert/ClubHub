@@ -1,4 +1,3 @@
-```
 # Sprint 1 Report
 Video Link: 
 
@@ -82,4 +81,3 @@ Here are changes we plan to implement in the next sprint:
    * Item 3: Meet more often so the team stays in sync and testing happens alongside development
    * Item 4: Open a pull request for every change instead of committing directly to main
    * Item 5: Split each functional requirement into separate front-end and back-end Kanban items
-```

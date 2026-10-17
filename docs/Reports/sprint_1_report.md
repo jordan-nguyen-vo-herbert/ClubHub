@@ -45,8 +45,31 @@ Here are links to the issues that we completed in this sprint:
  * URL of issue 17: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/23
 
 ## Incomplete Issues/User Stories
+FR-002.3 Back End: Club Registration Submission
+Scenario: Successful club registration
+  Given I am logged in with a valid student account
+  And I am on the club registration page
+  When I submit a registration form with a club name, description, and category
+  Then the registration is saved with a status of "Pending Approval"
+  And I am notified that an administrator will review my submission
+We haven't implemented the status or administrator feature yet. They are for the second sprint. So after registering the president can't see the status of the club for now.
 
-All Sprint 1 issues/user stories met
+FR-002.4 Front End: Club Page
+Scenario: Viewing an approved club
+  Given "Chess Club" has status "APPROVED"
+  When a student navigates to the Chess Club page
+  Then the page shows the club's name, description, category, meeting info, advisor, contact email, and officers
+  And a "Request to Join" button is shown
+Status feature hasn't been implemented yet and the "Request to Join" button is also a task for Sprint 2.
+
+FR-002.5 Front End: Club Registration Submission
+Scenario: Confirmation after submitting
+  Given a student successfully submits a registration for "Chess Club"
+  When the confirmation page loads
+  Then a success message says the request is awaiting admin approval
+  And a summary of the submitted details is shown
+  And a link to "My Club Requests" is shown
+We are yet to implement the request and admin feature. So right now the student can only see the confirmation page and the summary.
 
 ## Code Files for Review
 Please review the following code files, which were actively developed during this sprint, for quality:

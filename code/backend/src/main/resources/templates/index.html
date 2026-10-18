@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,22 +8,18 @@
 </head>
 <body>
     <header>
-        empty
+        <h1>ClubHub</h1>
     </header>
     <section>
-        <h2>
-            temp title
-
-            <a href="https://github.com/jordan-nguyen-vo-herbert/ClubHub"
-                target="_blank"> github repo</a>
-        </h2>
-        <h3>
-            blah blah
-        </h3>
-        <ul
-            th:each="item: ${features}">
-                <li th:text="${item}"/>
+        <p>A university club management system for WSU students.</p>
+        <ul>
+            <li><a th:href="@{/studentForm}">Create a student profile</a></li>
+            <li><a th:href="@{/profile}">My student profile</a></li>
+            <li><a th:href="@{/clubForm}">Register a club</a></li>
+            <li><a th:href="@{/clubs/search}">Search clubs</a></li>
         </ul>
+        <a href="https://github.com/jordan-nguyen-vo-herbert/ClubHub"
+            target="_blank">GitHub repo</a>
     </section>
     <footer>
         <p>Jordan Herbert, Yohann Sharma, Tirth Shah, Daniel Diyali</p>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>No Profile - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <section>
+        <h1>No Student Profile</h1>
+        <p>You have not created a student profile yet.</p>
+        <ul>
+            <li><a th:href="@{/studentForm}">Create a student profile</a></li>
+            <li><a th:href="@{/}">Back to home</a></li>
+        </ul>
+    </section>
+</body>
+</html>

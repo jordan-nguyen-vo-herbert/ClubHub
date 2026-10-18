@@ -43,6 +43,9 @@ Here are links to the issues that we completed in this sprint:
  * URL of issue 15: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/24
  * URL of issue 16: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/22
  * URL of issue 17: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/23
+ * URL of issue 18: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/21
+ * URL of issue 19: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/16
+ * URL of issue 20: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/20
 
 ## Incomplete Issues/User Stories
 All Sprint 1 issues are closed, but these user stories still have acceptance criteria scenarios that are not met. Some of the features had consisted of user stories that depend on implementations that were orccuring in later sprints, such as some requiring our authentication layer to be established. Sprint 2 will focus its kick off with restructuring these.

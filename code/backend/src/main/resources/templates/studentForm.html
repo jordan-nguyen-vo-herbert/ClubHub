@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Create Profile - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <section>
+        <h1>Create Student Profile</h1>
+        <!--/* th:object binds the form to ${studentForm}, each *{field} must match a field in StudentForm.java */-->
+        <form th:action="@{/studentForm}" th:object="${studentForm}" method="post">
+            <div>
+                <label for="studentNumber">WSU ID</label>
+                <input type="text" th:field="*{studentNumber}" required />
+                <!--/* Only rendered when the controller rejects the value (duplicate WSU ID) */-->
+                <p class="error" th:if="${#fields.hasErrors('studentNumber')}" th:errors="*{studentNumber}">WSU ID error</p>
+            </div>
+            <div>
+                <label for="firstName">First name</label>
+                <input type="text" th:field="*{firstName}" required />
+            </div>
+            <div>
+                <label for="lastName">Last name</label>
+                <input type="text" th:field="*{lastName}" required />
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" th:field="*{email}" required />
+            </div>
+            <div>
+                <label for="major">Major</label>
+                <input type="text" th:field="*{major}" />
+            </div>
+            <div>
+                <label for="gender">Gender (optional)</label>
+                <select th:field="*{gender}">
+                    <!--/* Empty value -> Spring stores null, so the field stays optional */-->
+                    <option value="">-- Select --</option>
+                    <option th:each="g : ${genderOptions}" th:value="${g}" th:text="${g.gender}">Gender</option>
+                </select>
+            </div>
+            <div>
+                <label for="pronouns">Pronouns (optional)</label>
+                <select th:field="*{pronouns}">
+                    <option value="">-- Select --</option>
+                    <option th:each="p : ${pronounOptions}" th:value="${p}" th:text="${p.pronouns}">Pronouns</option>
+                </select>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" th:field="*{password}" required />
+            </div>
+            <button type="submit">Create profile</button>
+        </form>
+        <a th:href="@{/}">Back to home</a>
+    </section>
+</body>
+</html>

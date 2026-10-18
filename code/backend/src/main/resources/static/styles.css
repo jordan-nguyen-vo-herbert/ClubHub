@@ -1,2 +1,49 @@
-﻿body {
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 0 16px;
+    color: #222;
+}
+
+/* Forms: one field per row, label above the input */
+form div {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+button {
+    display: block;
+    margin-bottom: 16px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #981e32;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Message shown under a field the controller rejected */
+.error {
+    margin: 4px 0 0;
+    color: #b00020;
+    font-size: 0.9rem;
 }

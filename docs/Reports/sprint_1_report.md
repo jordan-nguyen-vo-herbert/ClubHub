@@ -43,6 +43,9 @@ Here are links to the issues that we completed in this sprint:
  * URL of issue 15: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/24
  * URL of issue 16: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/22
  * URL of issue 17: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/23
+ * URL of issue 18: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/21
+ * URL of issue 19: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/16
+ * URL of issue 20: https://github.com/jordan-nguyen-vo-herbert/ClubHub/issues/20
 
 ## Incomplete Issues/User Stories
 All 20 Sprint 1 issues were completed and closed, but the following user stories still have acceptance criteria scenarios that our implementation does not meet yet. Most of these scenarios depend on features scheduled for later sprints: user authentication (FR-010) and administrator roles for approving clubs (FR-009) in Sprint 3, and member management (FR-004) and the working user interface (FR-006) in Sprint 2. The remaining gaps are edge cases that our Sprint 1 review identified as unfinished. Each link leads to the issue with its full Gherkin scenarios.

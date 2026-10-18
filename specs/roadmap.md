@@ -8,10 +8,30 @@ Issue numbers refer to the GitHub issues, which hold the full user stories and G
 **Goal:** Set up the Spring Boot, JPA and Thymeleaf architecture and deliver the first features end to end, from submitting a form to viewing the saved result.
 
 **Features:**
-- FR-001 User profile creation: profile form, submission and profile page (#28, #15, #26, #30)
-- FR-002 Club registration (US-02): registration form, submission and club page (#27, #31, #7, #33, #32)
-- FR-003 Club search: search by name and by area of interest (#9, #34)
-- Tests TEST-001 to TEST-009 for the three features
+- **FR-001 User Profile Creation**
+  - FR-001.1 Back End: User Profile Form (#28)
+  - FR-001.2 Front End: User Profile Page (#15)
+  - FR-001.3 Back End: User Profile Submit (#26)
+  - FR-001.4 Front End: User Profile Form & Submission (#30)
+- **FR-002 Club Registration**
+  - FR-002.1 Back End: Club Registration Form (#27)
+  - FR-002.2 Front End: Club Registration Form (#31)
+  - FR-002.3 Back End: Club Registration Submission (#7)
+  - FR-002.4 Front End: Club Page (#33)
+  - FR-002.5 Front End: Club Registration Submission (#32)
+- **FR-003 Club Search**
+  - FR-003.1 Back End: Club Search (#9)
+  - FR-003.2 Front End: Club Search (#34)
+- **Tests**
+  - TEST-001: Shared Test Data – 5 Students, 5 Clubs (#16)
+  - TEST-002: Student Profile Creation (FR-001) (#17)
+  - TEST-003: Duplicate WSU ID Error (FR-001) (#18)
+  - TEST-004: Student Profile Page (FR-001) (#19)
+  - TEST-005: Club Registration (FR-002) (#24)
+  - TEST-006: Unknown Founder Error (FR-002) (#20)
+  - TEST-007: Club Page (FR-002) (#21)
+  - TEST-008: Club Search by Name (FR-003) (#22)
+  - TEST-009: Club Search by Area (FR-003) (#23)
 
 **Completion Criteria:**
 - All three features work end to end, from submitting a form to viewing the saved result
@@ -24,13 +44,31 @@ Issue numbers refer to the GitHub issues, which hold the full user stories and G
 **Goal:** Sign students in so every page knows who is using it, then add member management and site-wide navigation. This brings ClubHub to six of ten features. The phase also starts specification-driven development: each feature's spec is written and reviewed before its code.
 
 **Features:**
-- Project constitution and feature specs (SDD-1 to SDD-5, #44 to #48): `specs/mission.md`, `roadmap.md` and `tech-stack.md`, plus spec folders for sign-in, manage-members and navigation
-- FR-010 User authentication (US-01, #5): sign-in with the WSU email and password from the student's profile, passwords stored as BCrypt hashes, sign-out, and a redirect to sign-in on pages that need it (#49, #55)
-- FR-004 Manage members (#12): officers add members by WSU ID and remove them, and students request to join (#51, #57)
-- FR-006 Working web interface (#10): navigation on every page and an unavailable-page screen with a link home (#56)
-- FR-002 and FR-003 follow-ups: signed-in club registration (#50), registration edge cases (#52), a confirmation and My Club Requests page (#58), and search refinements (#53)
-- DB-1 (#54): move from H2 to PostgreSQL, keeping H2 for tests
-- Tests TEST-010 to TEST-012 (#59 to #61)
+- **Specification Driven Development Documents** (#25)
+  - SDD-1 Docs: Project constitution (#44)
+  - SDD-2 Docs: FR-010 spec (#45)
+  - SDD-3 Docs: FR-004 spec (#46)
+  - SDD-4 Docs: FR-006 spec (#47)
+  - SDD-5 Docs: Validation (#48)
+- **FR-002 Club Registration**
+  - FR-002.6 Back End: Registration edge cases (#52)
+  - FR-002.7 Back End: Signed-in club registration (#50), needs FR-010.1
+  - FR-002.8 Front End: Confirmation and My Club Requests (#58)
+- **FR-003 Club Search**
+  - FR-003.3 Back End: Search refinements (#53)
+- **FR-004 Manage Members** (#12)
+  - FR-004.1 Back End: Manage members (#51)
+  - FR-004.2 Front End: Member management page (#57)
+- **FR-006 Working Webpage/User Interface** (#10)
+  - FR-006.1 Front End: Navigation and error pages (#56)
+- **FR-010 User Authentication** (#5)
+  - FR-010.1 Back End: Sign-in (#49)
+  - FR-010.2 Front End: Sign-in page (#55)
+- **DB-1 Data: PostgreSQL** (#54)
+- **Tests**
+  - TEST-010 Tests: Sprint 1 fixes (#59)
+  - TEST-011 Tests: Sign-in and members (#60)
+  - TEST-012 Tests: Navigation, search and registration (#61)
 
 **Completion Criteria:**
 - The constitution and the three feature spec folders are merged to `main` through reviewed pull requests by Oct 24
@@ -46,10 +84,19 @@ Issue numbers refer to the GitHub issues, which hold the full user stories and G
 **Goal:** Finish the remaining four features in dependency order: roles and feedback first, then events, then analytics. This completes a club management system with its administrative side for the final demo.
 
 **Features:**
-- FR-009 User roles and permissions (#14): an administrator account, approving or rejecting pending clubs with a reason, officer roles with officer-only checks, and an admin review page (#62, #63). Needs FR-010.
-- FR-008 Feedback (#11): signed-in users submit feedback through a form with required fields (#64, #65). Needs FR-010.
-- FR-005 Event management and notifications (US-03, #8): officers create events with a valid date, time and location, every club member is emailed, and events appear on a schedule and calendar (#66 to #68). Needs FR-004 and FR-009.
-- FR-007 Analytics dashboard (#13): membership and attendance counts per club on a dashboard (#69, #70). Needs FR-004 and FR-005.
+- **FR-009 User Roles and Permissions** (#14), needs FR-010
+  - FR-009.1 Back End: Roles and club approval (#62)
+  - FR-009.2 Front End: Admin review page (#63)
+- **FR-008 Feedback Option** (#11), needs FR-010
+  - FR-008.1 Back End: Feedback (#64)
+  - FR-008.2 Front End: Feedback form (#65)
+- **FR-005 Event Management and Notifications** (#8), needs FR-004 and FR-009
+  - FR-005.1 Back End: Events (#66)
+  - FR-005.2 Back End: Email notifications (#67)
+  - FR-005.3 Front End: Event form and calendar (#68)
+- **FR-007 Analytics Dashboard** (#13), needs FR-004 and FR-005
+  - FR-007.1 Back End: Analytics (#69)
+  - FR-007.2 Front End: Analytics dashboard (#70)
 
 **Completion Criteria:**
 - An administrator can approve or reject a pending club, and the student sees the outcome on My Club Requests

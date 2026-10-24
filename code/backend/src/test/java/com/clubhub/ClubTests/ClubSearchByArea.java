@@ -105,4 +105,45 @@ public class ClubSearchByArea {
                 .andExpect(content().string(
                         not(containsString("Different Area Club"))));
     }
+
+
+    /**
+     * Verifies that searching an area with no clubs
+     * displays no results.
+     */
+    @Test
+    public void searchByAreaWithNoClubsDisplaysNoResults() throws Exception {
+
+        // Arrange: create a founder and select two different areas.
+        Student founder = createTestStudent("87654322");
+
+        AreaOfInterest areaWithClubs = AreaOfInterest.values()[0];
+
+        AreaOfInterest emptyArea = null;
+        for (AreaOfInterest area : AreaOfInterest.values()) {
+            if (area != areaWithClubs) {
+                emptyArea = area;
+                break;
+            }
+        }
+
+        assertNotNull(emptyArea,
+            "AreaOfInterest must contain at least two values.");
+
+        // Create clubs only in the first area.
+        createTestClub("Chess Club", areaWithClubs, founder);
+        createTestClub("Photography Club", areaWithClubs, founder);
+
+        // Act and assert: search the area with no clubs.
+        mockMvc.perform(get("/clubs/search/area")
+                    .param("area", emptyArea.name()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("clubs"))
+            .andExpect(model().attributeExists("clubs"))
+            .andExpect(content().string(
+                    not(containsString("Chess Club"))))
+            .andExpect(content().string(
+                    not(containsString("Photography Club"))));
+    }
+
 }

@@ -93,4 +93,38 @@ public class ClubSearchByName {
                 .andExpect(content().string(
                         not(containsString("Photography Club"))));
     }
+
+    /**
+     * Verifies that capitalization doesn't matter when searching by name.
+     */
+
+    /**
+     * TEST-008: Verifies that club name searches are case-insensitive.
+    */
+    @Test
+    public void searchByNameIgnoresCapitalization() throws Exception {
+
+        // Arrange: create clubs with different names.
+        Student founder = createTestStudent("87654322");
+
+        AreaOfInterest area = AreaOfInterest.values()[0];
+
+        createTestClub("Chess Club", area, founder);
+        createTestClub("Advanced Chess Club", area, founder);
+        createTestClub("Photography Club", area, founder);
+
+        // Act and assert: search using lowercase "chess".
+        mockMvc.perform(get("/clubs/search/name")
+                    .param("name", "chess"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("clubs"))
+            .andExpect(model().attributeExists("clubs"))
+            .andExpect(content().string(
+                    containsString("Chess Club")))
+            .andExpect(content().string(
+                    containsString("Advanced Chess Club")))
+            .andExpect(content().string(
+                    not(containsString("Photography Club"))));
+   }
+
 }

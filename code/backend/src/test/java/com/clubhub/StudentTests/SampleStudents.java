@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
@@ -84,6 +85,7 @@ public class SampleStudents {
      */
     public static MockHttpServletRequestBuilder submit(StudentData student) {
         return post("/studentForm")
+                .with(csrf()) // the hidden token a real form includes, Spring Security rejects POSTs without it
                 .param("studentNumber", student.studentNumber())
                 .param("firstName", student.firstName())
                 .param("lastName", student.lastName())

@@ -1,5 +1,7 @@
 package com.clubhub.entities;
 
+import java.util.Locale;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -20,6 +22,8 @@ public class Student {
     private String studentNumber;
     private String firstName;
     private String lastName;
+    // The student signs in with this (FR-010-03), so it must be unique, required and stored in lowercase
+    @Column(unique = true, nullable = false)
     private String email;
     private String major; // String for now, may become a Major entity later
 
@@ -30,7 +34,8 @@ public class Student {
     @Enumerated(EnumType.STRING)
     private Pronouns pronouns;
 
-    // TODO: hash before storing (e.g. BCrypt) once Spring Security is added
+    // Always a BCrypt hash, never the typed password (FR-010-02): StudentController hashes new ones
+    // and PasswordMigration hashes any old plain-text ones at startup
     @JsonIgnore
     private String password;
 
@@ -95,9 +100,19 @@ public class Student {
         return pronouns;
     }
 
-    // Returns the student's password for security reasons, this might be hashed
+    // Returns the stored BCrypt hash, only Spring Security and PasswordMigration should read it
     public String getPassword() {
         return password;
+    }
+
+    // Replaces the stored password with a BCrypt hash, used by PasswordMigration (never pass a typed password)
+    public void replacePasswordHash(String passwordHash) {
+        this.password = passwordHash;
+    }
+
+    // The one way emails are stored and looked up: trimmed and lowercase, so "Alex.Rivera@WSU.edu" matches
+    public static String normalizeEmail(String email) {
+        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }
 
     // Potentially function to change name

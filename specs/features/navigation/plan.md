@@ -3,10 +3,10 @@
 ## Tasks
 
 ### FR-006.1 Front End: Navigation and error pages (#56, Yohann)
-- [ ] `fragments/nav.html`: the navigation header with the five links, as the fragment `header`
+- [ ] `fragments/nav.html`: the navigation header with the links from FR-006-01, as the fragment `header`
 - [ ] Delete `fragments/details.html`, the unused placeholder that `nav.html` replaces
-- [ ] Insert the header as the first element of `<body>` in every page: `index.html`, `studentForm.html`, `student-profile.html`, `no-profile.html`, `clubForm.html`, `club.html` and `clubs.html`
-- [ ] Remove the "Back to home" links from `studentForm.html`, `student-profile.html`, `no-profile.html`, `clubForm.html`, `club.html` and `clubs.html`, now that the header has "Home". `no-profile.html` keeps its "Create a student profile" link
+- [ ] Insert the header as the first element of `<body>` in every page: `index.html`, `studentForm.html`, `student-profile.html`, `clubForm.html`, `club.html` and `clubs.html`. Skip `no-profile.html`: it can't be reached once sign-in (FR-010) is merged, and FR-010 removes it
+- [ ] Remove the "Back to home" links from `studentForm.html`, `student-profile.html`, `clubForm.html`, `club.html` and `clubs.html`, now that the header has "Home".
 - [ ] `index.html`: keep the list of destinations in step with the header (FR-006-02), and change the title to "ClubHub"
 - [ ] `error/404.html`: add the header, say "This page could not be loaded", and use `th:href="@{/}"` for the link home
 - [ ] `error.html` (new): the general error page with the header, `${status}` and `${error}`, a short explanation and a link home
@@ -16,8 +16,8 @@
 
 ### Coordination with FR-010.2 Front End: Sign-in page (#55, Yohann)
 - [ ] Whichever of FR-006.1 and FR-010.2 merges second adds its part of the header to `nav.html`: the first name, sign-out button and "Sign in" link come from FR-010.2
-- [ ] "Sign in" link (FR-006-08): add it to `nav.html` only once `/login` exists, shown with `sec:authorize="isAnonymous()"`
-- [ ] Add `login.html` to the list of pages that insert the header
+- [ ] "Sign in" link (FR-006-08): add it to `nav.html` only once `/login` exists, next to "Create a student profile", both inside `sec:authorize="isAnonymous()"`, and put "My student profile" inside `sec:authorize="isAuthenticated()"` (FR-006-01)
+- [ ] Insert the header in `login.html` too, which FR-010.2 adds
 
 ### Tests
 - [ ] `validation.md` for this folder (SDD-5, #48, Daniel)
@@ -32,7 +32,7 @@ All paths are under `code/backend/`.
 - `src/main/resources/templates/error.html` (new): the general error page for every status other than 404
 - `src/main/resources/templates/error/404.html`: the header, the "could not be loaded" message and a `th:href` link home
 - `src/main/resources/templates/index.html`: the header, the destination list and the "ClubHub" title
-- `src/main/resources/templates/studentForm.html`, `student-profile.html`, `no-profile.html`, `clubForm.html`, `club.html` and `clubs.html`: insert the header and remove the "Back to home" link
+- `src/main/resources/templates/studentForm.html`, `student-profile.html`, `clubForm.html`, `club.html` and `clubs.html`: insert the header and remove the "Back to home" link
 - `src/main/resources/static/styles.css`: styles for the header
 - `src/test/java/com/clubhub/NavigationTests/` (new, TEST-012, Daniel): navigation and error page tests
 

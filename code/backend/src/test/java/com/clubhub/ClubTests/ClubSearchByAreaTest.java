@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class ClubSearchByArea {
+public class ClubSearchByAreaTest {
 
     @Autowired
     private MockMvc mockMvc;

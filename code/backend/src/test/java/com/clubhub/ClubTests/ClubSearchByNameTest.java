@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.not;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class ClubSearchByName {
+public class ClubSearchByNameTest {
 
     @Autowired
     private MockMvc mockMvc;

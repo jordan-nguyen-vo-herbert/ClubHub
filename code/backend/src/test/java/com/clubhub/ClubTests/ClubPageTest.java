@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,5 +76,20 @@ public class ClubPageTest {
                 .andExpect(model().attributeExists("club"))
                 .andExpect(content().string(
                         containsString("Club Page Test Club")));
+    }
+
+    /**
+     * Verifies that a 404 error is returned when trying to access
+     * a club page that doesn't exist.
+     */
+    @Test
+    public void missingClubIdDisplays404Page() throws Exception {
+
+    long missingClubId = Long.MAX_VALUE;
+
+    assertFalse(clubRepository.existsById(missingClubId));
+
+    mockMvc.perform(get("/clubs/" + missingClubId))
+            .andExpect(status().isNotFound());
     }
 }

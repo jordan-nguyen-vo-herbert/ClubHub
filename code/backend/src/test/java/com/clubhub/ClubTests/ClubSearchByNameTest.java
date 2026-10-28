@@ -17,12 +17,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class ClubSearchByArea {
+public class ClubSearchByNameTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,7 +57,7 @@ public class ClubSearchByArea {
         Club club = new Club(
                 clubName,
                 area,
-                "Test club for area search",
+                "Test club for name search",
                 founder
         );
 
@@ -66,43 +65,66 @@ public class ClubSearchByArea {
     }
 
     /**
-     * Verifies that searching by area displays matching clubs
-     * and excludes clubs from other areas.
+     * Verifies that searching by name displays matching clubs
+     * and excludes clubs that don't match the search.
      */
     @Test
-    public void searchByAreaDisplaysMatchingClubs() throws Exception {
+    public void searchByNameDisplaysMatchingClubs() throws Exception {
 
-        // Arrange: create clubs in different areas.
+        // Arrange: create clubs with different names.
         Student founder = createTestStudent("87654321");
 
-        AreaOfInterest areaToSearch = AreaOfInterest.values()[0];
+        AreaOfInterest area = AreaOfInterest.values()[0];
 
-        AreaOfInterest otherArea = null;
-        for (AreaOfInterest area : AreaOfInterest.values()) {
-            if (area != areaToSearch) {
-                otherArea = area;
-                break;
-            }
-        }
+        createTestClub("Chess Club", area, founder);
+        createTestClub("Advanced Chess Club", area, founder);
+        createTestClub("Photography Club", area, founder);
 
-        assertNotNull(otherArea,
-                "AreaOfInterest must contain at least two values.");
-
-        createTestClub("First Matching Club", areaToSearch, founder);
-        createTestClub("Second Matching Club", areaToSearch, founder);
-        createTestClub("Different Area Club", otherArea, founder);
-
-        // Act and assert: simulate searching by area on the website.
-        mockMvc.perform(get("/clubs/search/area")
-                        .param("area", areaToSearch.name()))
+        // Act and assert: search for clubs containing "Chess".
+        mockMvc.perform(get("/clubs/search/name")
+                        .param("name", "Chess"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("clubs"))
                 .andExpect(model().attributeExists("clubs"))
                 .andExpect(content().string(
-                        containsString("First Matching Club")))
+                        containsString("Chess Club")))
                 .andExpect(content().string(
-                        containsString("Second Matching Club")))
+                        containsString("Advanced Chess Club")))
                 .andExpect(content().string(
-                        not(containsString("Different Area Club"))));
+                        not(containsString("Photography Club"))));
     }
+
+    /**
+     * Verifies that capitalization doesn't matter when searching by name.
+     */
+
+    /**
+     * TEST-008: Verifies that club name searches are case-insensitive.
+    */
+    @Test
+    public void searchByNameIgnoresCapitalization() throws Exception {
+
+        // Arrange: create clubs with different names.
+        Student founder = createTestStudent("87654322");
+
+        AreaOfInterest area = AreaOfInterest.values()[0];
+
+        createTestClub("Chess Club", area, founder);
+        createTestClub("Advanced Chess Club", area, founder);
+        createTestClub("Photography Club", area, founder);
+
+        // Act and assert: search using lowercase "chess".
+        mockMvc.perform(get("/clubs/search/name")
+                    .param("name", "chess"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("clubs"))
+            .andExpect(model().attributeExists("clubs"))
+            .andExpect(content().string(
+                    containsString("Chess Club")))
+            .andExpect(content().string(
+                    containsString("Advanced Chess Club")))
+            .andExpect(content().string(
+                    not(containsString("Photography Club"))));
+   }
+
 }

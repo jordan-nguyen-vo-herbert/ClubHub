@@ -3,6 +3,15 @@ package com.clubhub.ClubTests;
 import com.clubhub.entities.AreaOfInterest;
 import com.clubhub.entities.Student;
 import com.clubhub.repository.StudentRepository;
+import com.clubhub.entities.Club;
+import com.clubhub.entities.ClubRole;
+import com.clubhub.entities.ClubStatus;
+import com.clubhub.entities.Member;
+import com.clubhub.repository.ClubRepository;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +36,9 @@ public class ClubRegistrationTest {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired 
+    private ClubRepository clubRepository;
 
     // Helper method to create a student directly in the test database.
     private Student createTestStudent(String studentNumber) {
@@ -68,19 +80,79 @@ public class ClubRegistrationTest {
      * Verifies that a student with an existing profile
      * can successfully register a club.
      */
-    @Test
-    public void registrationSucceedsWithValidStudentID() throws Exception {
+@Test
+public void registrationCreatesFivePendingClubsWithFounderAsPresident()
+        throws Exception {
 
-        Student student = createTestStudent("12345678");
+    // Create the founder's student profile.
+    Student student = createTestStudent("12345678");
+
+    // Record the number of clubs before registration.
+    long initialClubCount = clubRepository.count();
+
+    // Register five clubs.
+    for (int i = 1; i <= 5; i++) {
+        String clubName = "TEST-005 Club " + i;
 
         mockMvc.perform(post("/clubForm")
                 .with(csrf())
-                .param("clubName", "Valid ID Test Club")
+                .param("clubName", clubName)
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
-                .param("description", "Testing valid student ID")
-                .param("founderStudentNumber", student.getStudentNumber()))
-
+                .param("description", "Testing club registration " + i)
+                .param("founderStudentNumber",
+                        student.getStudentNumber()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/clubs/*"));
     }
+
+    // Verify that exactly five clubs were created.
+    assertEquals(
+            initialClubCount + 5,
+            clubRepository.count(),
+            "Five new clubs should be registered"
+    );
+
+    // Verify every registered club.
+    for (int i = 1; i <= 5; i++) {
+        String clubName = "TEST-005 Club " + i;
+
+        List<Club> matchingClubs =
+                clubRepository.findByClubNameContainingIgnoreCase(clubName);
+
+        assertEquals(
+                1,
+                matchingClubs.size(),
+                "The club should exist exactly once: " + clubName
+        );
+
+        Club club = matchingClubs.get(0);
+
+        // Verify the founder.
+        assertNotNull(club.getFounder());
+        assertEquals(
+                student.getStudentNumber(),
+                club.getFounder().getStudentNumber(),
+                "The registered founder should match the submitted student"
+        );
+
+        // Verify the default Pending status.
+        assertEquals(
+                ClubStatus.PENDING,
+                club.getStatus(),
+                "New club applications should have Pending status"
+        );
+
+        // Verify the founder is a member with the President role.
+        List<Member> members = club.getMembers();
+
+        assertTrue(
+                members.stream().anyMatch(member ->
+                        member.getStudent().getStudentNumber()
+                                .equals(student.getStudentNumber())
+                                && member.getRole() == ClubRole.PRESIDENT
+                ),
+                "The founder should be a member with the President role"
+        );
+    }
+}
 }

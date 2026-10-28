@@ -1,9 +1,62 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
-    max-width: 480px;
-    margin: 40px auto;
-    padding: 0 16px;
+    margin: 0;
+    padding-bottom: 40px;
     color: #222;
+}
+
+/* Page content: a centered column, the shared header spans the full width above it */
+body > :not(.site-header) {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 16px;
+}
+
+/* Shared header (fragments/nav.html): ClubHub on the left, sign-in state on the right */
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding: 12px 24px;
+    background-color: #981e32;
+    color: #fff;
+}
+
+.site-header a {
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.site-header a:hover {
+    text-decoration: underline;
+}
+
+.site-header .brand {
+    font-size: 1.25rem;
+}
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.site-header form {
+    margin: 0;
+}
+
+/* Sign out: a small white button instead of the full-size crimson one */
+.site-header button {
+    display: inline-block;
+    margin: 0;
+    padding: 6px 12px;
+    background-color: #fff;
+    color: #981e32;
+    font-size: 0.9rem;
+    font-weight: bold;
 }
 
 /* Forms: one field per row, label above the input */
@@ -46,4 +99,41 @@ button {
     margin: 4px 0 0;
     color: #b00020;
     font-size: 0.9rem;
+}
+
+/* Sign-in page (login.html) */
+
+/* Short grey line under a page heading */
+.hint {
+    margin-top: -8px;
+    color: #555;
+}
+
+/* Message for the whole form, such as a failed sign-in */
+.alert {
+    padding: 10px 12px;
+    border: 1px solid #b00020;
+    border-left-width: 4px;
+    border-radius: 4px;
+    background-color: #fdecee;
+    color: #b00020;
+}
+
+/* Light box around a form */
+.card {
+    padding: 20px 20px 4px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+}
+
+/* A button as wide as the form, for a form with a single action */
+button.full-width {
+    width: 100%;
+}
+
+/* Small links under a form */
+.links {
+    font-size: 0.95rem;
+    color: #555;
 }

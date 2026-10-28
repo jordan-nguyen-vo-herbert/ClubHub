@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!--/* Shared header, inserted at the top of every page with
+         <header th:replace="~{fragments/nav :: header}"></header>
+         FR-010.2 adds the sign-in parts, FR-006.1 adds the navigation links (specs/features/navigation/design.md) */-->
+    <header th:fragment="header" class="site-header">
+        <a class="brand" th:href="@{/}">ClubHub</a>
+        <nav>
+            <!--/* Signed out: a link to the sign-in page (FR-010-11, FR-006-08) */-->
+            <a sec:authorize="isAnonymous()" th:href="@{/login}">Sign in</a>
+            <!--/* Signed in: the student's first name and a sign-out button (FR-010-11) */-->
+            <th:block sec:authorize="isAuthenticated()">
+                <span class="user">Signed in as <strong sec:authentication="principal.firstName">Butch</strong></span>
+                <!--/* Sign-out must be a POST, th:action adds the CSRF token, then SecurityConfig sends the browser home (FR-010-08) */-->
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit">Sign out</button>
+                </form>
+            </th:block>
+        </nav>
+    </header>
+</body>
+</html>

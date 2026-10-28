@@ -149,7 +149,8 @@ classDiagram
   - `LoginController` (new): shows the sign-in page.
   - `PasswordMigration` (new): hashes old plain-text passwords at startup.
   - `StudentController`, `StudentRepository` and `Student` (changed).
-  - `login.html` and the shared header (new and changed, FR-010.2).
+  - `login.html` (new): a plain page in FR-010.1, styled in FR-010.2.
+  - The shared header (changed, FR-010.2).
 - **Responsibilities:**
   - `SecurityConfig` lists the public pages (FR-010-05), sets up sign-in at `/login` with the `email` and `password` fields, and sends sign-out to `/`.
   - `StudentUserDetailsService` looks the student up by lowercase email. It throws `UsernameNotFoundException` when there is no match, which Spring shows as the same error as a wrong password (NFR-010-02).

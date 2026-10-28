@@ -28,6 +28,8 @@
             <div>
                 <label for="email">Email</label>
                 <input type="email" th:field="*{email}" required />
+                <!--/* Only rendered when the controller rejects the email (not @wsu.edu, or already has a profile) */-->
+                <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</p>
             </div>
             <div>
                 <label for="major">Major</label>

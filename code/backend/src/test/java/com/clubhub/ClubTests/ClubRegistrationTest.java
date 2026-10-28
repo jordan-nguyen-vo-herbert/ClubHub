@@ -17,15 +17,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@WithMockUser // registering a club needs a signed-in student (FR-010-05), a stand-in test user is enough here
 public class ClubRegistrationTest {
 
     @Autowired
@@ -61,6 +64,7 @@ public class ClubRegistrationTest {
     public void registrationFailsWithInvalidStudentID() throws Exception {
 
         mockMvc.perform(post("/clubForm")
+                .with(csrf()) // the hidden token a real form includes, Spring Security rejects POSTs without it
                 .param("clubName", "Invalid ID Test Club")
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
                 .param("description", "Testing invalid student ID")
@@ -91,6 +95,7 @@ public void registrationCreatesFivePendingClubsWithFounderAsPresident()
         String clubName = "TEST-005 Club " + i;
 
         mockMvc.perform(post("/clubForm")
+                .with(csrf())
                 .param("clubName", clubName)
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
                 .param("description", "Testing club registration " + i)

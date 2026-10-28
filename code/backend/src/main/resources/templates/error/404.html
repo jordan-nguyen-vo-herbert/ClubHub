@@ -3,15 +3,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
-    <title>Not Found - ClubHub</title>
+    <title>Page Not Found - ClubHub</title>
     <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
     <header th:replace="~{fragments/nav :: header}"></header>
+    <!--/* Every "not found" case (FR-006-04): an unknown URL, or a club or student ID that doesn't exist */-->
     <section>
         <h1>Page not found</h1>
-        <p>We couldn't find what you were looking for.</p>
-        <a href="/">Back to home</a>
+        <p>This page could not be loaded. The link may be out of date, or the page may have been removed.</p>
+        <a th:href="@{/}">Back to home</a>
     </section>
 </body>
 </html>

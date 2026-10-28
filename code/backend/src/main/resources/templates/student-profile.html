@@ -18,7 +18,6 @@
             <li>Major: <span th:text="${student.major} ?: 'Undeclared'">Major</span></li>
             <li th:if="${student.gender != null}">Gender: <span th:text="${student.gender.gender}">Gender</span></li>
         </ul>
-        <a th:href="@{/}">Back to home</a>
     </section>
 </body>
 </html>

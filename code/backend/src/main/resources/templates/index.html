@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8" />
-    <title>Spring Boot ClubHub</title>
+    <title>ClubHub</title>
     <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
     <header th:replace="~{fragments/nav :: header}"></header>
-    <header>
-        <h1>ClubHub</h1>
-    </header>
     <section>
+        <h1>Welcome to ClubHub</h1>
         <p>A university club management system for WSU students.</p>
+        <!--/* The same destinations as the navigation header, for the same sign-in state (FR-006-02) */-->
         <ul>
-            <li><a th:href="@{/studentForm}">Create a student profile</a></li>
-            <li><a th:href="@{/profile}">My student profile</a></li>
-            <li><a th:href="@{/clubForm}">Register a club</a></li>
             <li><a th:href="@{/clubs/search}">Search clubs</a></li>
+            <li><a th:href="@{/clubForm}">Register a club</a></li>
+            <li sec:authorize="isAnonymous()"><a th:href="@{/studentForm}">Create a student profile</a></li>
+            <li sec:authorize="isAnonymous()"><a th:href="@{/login}">Sign in</a></li>
+            <li sec:authorize="isAuthenticated()"><a th:href="@{/profile}">My student profile</a></li>
         </ul>
         <a href="https://github.com/jordan-nguyen-vo-herbert/ClubHub"
             target="_blank">GitHub repo</a>

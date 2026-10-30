@@ -2,23 +2,33 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
-    <!--/* Shared header, inserted at the top of every page with
+    <!--/* Shared header, the only copy of the navigation links (NFR-006-01), inserted at the top of every page with
          <header th:replace="~{fragments/nav :: header}"></header>
-         FR-010.2 adds the sign-in parts, FR-006.1 adds the navigation links (specs/features/navigation/design.md) */-->
+         Link names and URLs are fixed in specs/features/navigation/design.md */-->
     <header th:fragment="header" class="site-header">
         <a class="brand" th:href="@{/}">ClubHub</a>
+        <!--/* Navigation links (FR-006-01) */-->
         <nav>
-            <!--/* Signed out: a link to the sign-in page (FR-010-11, FR-006-08) */-->
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/clubs/search}">Search clubs</a>
+            <a th:href="@{/clubForm}">Register a club</a>
+            <!--/* Signed out only: creating a profile while signed in would make a second account (FR-006-01) */-->
+            <a sec:authorize="isAnonymous()" th:href="@{/studentForm}">Create a student profile</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/profile}">My student profile</a>
+        </nav>
+        <!--/* Sign-in state on the right (FR-010-11, FR-006-08) */-->
+        <div class="site-user">
+            <!--/* Signed out: a link to the sign-in page */-->
             <a sec:authorize="isAnonymous()" th:href="@{/login}">Sign in</a>
-            <!--/* Signed in: the student's first name and a sign-out button (FR-010-11) */-->
+            <!--/* Signed in: the student's first name and a sign-out button */-->
             <th:block sec:authorize="isAuthenticated()">
-                <span class="user">Signed in as <strong sec:authentication="principal.firstName">Butch</strong></span>
+                <span>Signed in as <strong sec:authentication="principal.firstName">Butch</strong></span>
                 <!--/* Sign-out must be a POST, th:action adds the CSRF token, then SecurityConfig sends the browser home (FR-010-08) */-->
                 <form th:action="@{/logout}" method="post">
                     <button type="submit">Sign out</button>
                 </form>
             </th:block>
-        </nav>
+        </div>
     </header>
 </body>
 </html>

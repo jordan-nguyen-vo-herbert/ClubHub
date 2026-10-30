@@ -13,11 +13,12 @@ body > :not(.site-header) {
     padding: 0 16px;
 }
 
-/* Shared header (fragments/nav.html): ClubHub on the left, sign-in state on the right */
+/* Shared header (fragments/nav.html): ClubHub, then the navigation links, then the sign-in state on the right */
 .site-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px 32px;
     margin-bottom: 32px;
     padding: 12px 24px;
     background-color: #981e32;
@@ -38,10 +39,20 @@ body > :not(.site-header) {
     font-size: 1.25rem;
 }
 
-.site-header nav {
+.site-header nav,
+.site-header .site-user {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
+}
+
+/* The links take the middle, which pushes the sign-in state to the right */
+.site-header nav {
+    flex: 1;
+}
+
+.site-header nav a {
+    font-weight: normal;
 }
 
 .site-header form {
@@ -99,6 +110,13 @@ button {
     margin: 4px 0 0;
     color: #b00020;
     font-size: 0.9rem;
+}
+
+/* Error pages: the status code and its name, for example "400 Bad Request" */
+.status-code {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #981e32;
 }
 
 /* Sign-in page (login.html) */

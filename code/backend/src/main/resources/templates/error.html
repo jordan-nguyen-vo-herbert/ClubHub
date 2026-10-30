@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Error - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <header th:replace="~{fragments/nav :: header}"></header>
+    <!--/* General error page for every status except 404, which has error/404.html (FR-006-05)
+         Spring Boot fills in ${status} (e.g. 400) and ${error} (e.g. "Bad Request").
+         It never adds the exception message or stack trace while the server.error.include-* settings stay off (NFR-006-03) */-->
+    <section>
+        <h1>Something went wrong</h1>
+        <p class="status-code"><span th:text="${status}">400</span> <span th:text="${error}">Bad Request</span></p>
+        <!--/* A short explanation for the statuses ClubHub can return, and a general one for anything else */-->
+        <th:block th:switch="${status}">
+            <p th:case="400">The request couldn't be understood. Check the link or the search you entered and try again.</p>
+            <p th:case="403">You don't have permission to do that. If you were filling in a form, reload the page and try again.</p>
+            <p th:case="500">Something went wrong on our side. Please try again in a moment.</p>
+            <p th:case="*">This page could not be loaded.</p>
+        </th:block>
+        <a th:href="@{/}">Back to home</a>
+    </section>
+</body>
+</html>

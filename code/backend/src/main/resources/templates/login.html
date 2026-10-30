@@ -7,29 +7,33 @@
     <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-    <!--/* Plain page from the sign-in back end (FR-010.1), Yohann styles it in FR-010.2.
-         Keep the field names, URLs and message: they are fixed in specs/features/sign-in/design.md */-->
+    <header th:replace="~{fragments/nav :: header}"></header>
+    <!--/* Sign-in page (FR-010.2). Keep the field names, URLs and message: they are fixed in specs/features/sign-in/design.md */-->
     <section>
         <h1>Sign In</h1>
+        <p class="hint">Use the WSU email and password from your ClubHub profile.</p>
         <!--/* Only after a failed sign-in (/login?error), the same message for a wrong email or password (NFR-010-02) */-->
-        <p class="error" th:if="${param.error}">A valid school account is required</p>
-        <!--/* th:action adds the hidden CSRF token, Spring Security checks the email and password */-->
-        <form th:action="@{/login}" method="post">
-            <div>
-                <label for="email">WSU email</label>
-                <!--/* ${email} is the email from the failed attempt, so it stays in the field (FR-010-07) */-->
-                <input type="email" id="email" name="email" th:value="${email}" required autofocus />
-            </div>
-            <div>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required />
-            </div>
-            <button type="submit">Sign in</button>
-        </form>
-        <ul>
-            <li><a th:href="@{/studentForm}">Create a student profile</a></li>
-            <li><a th:href="@{/}">Back to home</a></li>
-        </ul>
+        <p class="alert" role="alert" th:if="${param.error}">A valid school account is required</p>
+        <div class="card">
+            <!--/* th:action adds the hidden CSRF token, Spring Security checks the email and password */-->
+            <form th:action="@{/login}" method="post">
+                <div>
+                    <label for="email">WSU email</label>
+                    <!--/* ${email} is the email from the failed attempt, so it stays in the field (FR-010-07) */-->
+                    <input type="email" id="email" name="email" th:value="${email}"
+                           placeholder="first.last@wsu.edu" autocomplete="username" required autofocus />
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required />
+                </div>
+                <button type="submit" class="full-width">Sign in</button>
+            </form>
+        </div>
+        <p class="links">
+            New to ClubHub? <a th:href="@{/studentForm}">Create a student profile</a>
+            &middot; <a th:href="@{/}">Back to home</a>
+        </p>
     </section>
 </body>
 </html>

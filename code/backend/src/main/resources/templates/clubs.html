@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
+    <header th:replace="~{fragments/nav :: header}"></header>
     <section>
         <h1>Search Clubs</h1>
         <!--/* method="get" puts the search in the URL, e.g. /clubs/search/name?name=chess */-->
@@ -41,7 +42,6 @@
                 </li>
             </ul>
         </div>
-        <a th:href="@{/}">Back to home</a>
     </section>
 </body>
 </html>

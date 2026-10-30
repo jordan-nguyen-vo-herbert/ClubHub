@@ -17,8 +17,8 @@
 - [x] White-box tests for each back-end scenario (`SignInBackEndTest`)
 
 ### FR-010.2 Front End: Sign-in page (#55, Yohann)
-- [ ] `login.html`: style the plain page from FR-010.1, keeping its field names, message and links
-- [ ] Shared header: the first name and a sign-out button when signed in, and a sign-in link when signed out (coordinate with FR-006.1, #56)
+- [x] `login.html`: style the plain page from FR-010.1, keeping its field names, message and links
+- [x] Shared header: the first name and a sign-out button when signed in, and a sign-in link when signed out (coordinate with FR-006.1, #56)
 
 ### Tests
 - [ ] `validation.md` for this folder (SDD-5, #48, Daniel)

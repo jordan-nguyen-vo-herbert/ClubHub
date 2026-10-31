@@ -117,4 +117,18 @@ public class ClubController {
         model.addAttribute("clubs", clubs); // available in the template as ${clubs}
         return "clubs"; // renders templates/clubs.html (Yohann)
     }
+    @GetMapping("/clubs/search/filter")
+    public String searchByKeywordAndArea(
+        @RequestParam String keyword,
+        @RequestParam AreaOfInterest area,
+        Model model) {
+
+        List<Club> found = clubRepository.searchByKeywordAndArea(keyword.trim(), area);
+        List<ClubResponse> clubs = new ArrayList<>();
+        for (Club club : found) {
+            clubs.add(toClubResponse(club));
+        }
+        model.addAttribute("clubs", clubs);
+        return "clubs";
+    }
 }

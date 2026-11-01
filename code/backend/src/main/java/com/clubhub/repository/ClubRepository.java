@@ -13,4 +13,6 @@ public interface ClubRepository extends CrudRepository<Club, Long> {
     // ClubSearch: Spring writes the query from the method name, names must match Club's fields
     List<Club> findByClubNameContainingIgnoreCase(String clubName); // partial match, "chess" finds "Chess Club"
     List<Club> findByAreaOfInterest(AreaOfInterest areaOfInterest);
+    // My Club Requests: the clubs a student founded, newest first (founder.id, sorted by clubID from high to low)
+    List<Club> findByFounderIdOrderByClubIDDesc(Long founderId);
 }

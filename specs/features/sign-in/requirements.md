@@ -60,7 +60,7 @@ The system shall never include a password or password hash in a page, a log mess
 The system shall show the same message for a failed sign-in whether the email or the password was wrong, so it never reveals which emails have a profile.
 
 ## Non-Functional Requirement: NFR-010-03
-Every form that sends a POST shall include a CSRF token, and the system shall reject a POST without a valid token with HTTP 403.
+Every form that sends a POST shall include a CSRF token, and the system shall reject a POST without a valid token with HTTP 403. The one exception comes from FR-002-04: a signed-out visitor's POST to a page that needs sign-in is rejected by redirecting them to the sign-in page.
 
 ## Non-Functional Requirement: NFR-010-04
 The session ID shall travel only in a cookie, never in a URL, and a session shall end after 30 minutes without activity.

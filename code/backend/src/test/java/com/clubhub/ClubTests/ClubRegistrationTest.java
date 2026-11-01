@@ -8,6 +8,7 @@ import com.clubhub.entities.ClubRole;
 import com.clubhub.entities.ClubStatus;
 import com.clubhub.entities.Member;
 import com.clubhub.repository.ClubRepository;
+import com.clubhub.security.StudentPrincipal;
 
 import java.util.List;
 
@@ -17,18 +18,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.clubhub.support.WithMockStudent;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// Registering a club needs a signed-in student with a saved profile, because the founder comes from the
+// signed-in student (FR-002-01). So each request signs in with .with(user(...)) instead of @WithMockStudent
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@WithMockStudent // registering a club needs a signed-in student (FR-010-05), signed in as a test student so the header can show their first name
 public class ClubRegistrationTest {
 
     @Autowired
@@ -57,23 +59,34 @@ public class ClubRegistrationTest {
     }
 
     /**
-     * Verifies that club registration fails if the founder's
-     * WSU student number doesn't exist.
+     * Verifies that the founder is always the signed-in student, even if
+     * the request also carries another student's WSU ID (NFR-002-01).
      */
     @Test
-    public void registrationFailsWithInvalidStudentID() throws Exception {
+    public void founderIsTheSignedInStudentEvenIfAnotherWsuIdIsSent() throws Exception {
+
+        Student signedIn = createTestStudent("11111111");
+        Student otherStudent = createTestStudent("22222222");
 
         mockMvc.perform(post("/clubForm")
                 .with(csrf()) // the hidden token a real form includes, Spring Security rejects POSTs without it
-                .param("clubName", "Invalid ID Test Club")
+                .with(user(new StudentPrincipal(signedIn))) // signs this request in as the saved student
+                .param("clubName", "Founder Test Club")
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
-                .param("description", "Testing invalid student ID")
-                .param("founderStudentNumber", "INVALID-TEST-ID"))
+                .param("description", "Testing who the founder is")
+                .param("founderStudentNumber", otherStudent.getStudentNumber()))
 
-                .andExpect(status().isOk())
-                .andExpect(view().name("clubForm"))
-                .andExpect(model().attributeHasFieldErrors(
-                        "clubForm", "founderStudentNumber"));
+                .andExpect(status().is3xxRedirection());
+
+        Club club = clubRepository.findByClubNameContainingIgnoreCase("Founder Test Club").get(0);
+
+        assertEquals(
+                signedIn.getStudentNumber(),
+                club.getFounder().getStudentNumber(),
+                "The founder should be the signed-in student, not the WSU ID in the request"
+        );
+        assertEquals(1, club.getMembers().size(), "The founder should be the only member");
+        assertEquals(ClubRole.PRESIDENT, club.getMembers().get(0).getRole());
     }
 
     /**
@@ -96,11 +109,10 @@ public void registrationCreatesFivePendingClubsWithFounderAsPresident()
 
         mockMvc.perform(post("/clubForm")
                 .with(csrf())
+                .with(user(new StudentPrincipal(student)))
                 .param("clubName", clubName)
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
-                .param("description", "Testing club registration " + i)
-                .param("founderStudentNumber",
-                        student.getStudentNumber()))
+                .param("description", "Testing club registration " + i))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/clubs/*"));
     }
@@ -132,7 +144,7 @@ public void registrationCreatesFivePendingClubsWithFounderAsPresident()
         assertEquals(
                 student.getStudentNumber(),
                 club.getFounder().getStudentNumber(),
-                "The registered founder should match the submitted student"
+                "The registered founder should match the signed-in student"
         );
 
         // Verify the default Pending status.

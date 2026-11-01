@@ -1,20 +1,38 @@
 package com.clubhub.security;
 
+import java.io.IOException;
+import java.util.List;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.csrf.CsrfException;
 
 @Configuration // Tells Spring this class defines beans, Spring Security picks up the SecurityFilterChain below
 public class SecurityConfig {
     // Session attribute holding the email from the last failed sign-in, read by the sign-in page
     public static final String LAST_EMAIL_ATTRIBUTE = "lastSignInEmail";
 
+    // Home, sign-in, create a profile (GET and POST), the stylesheet, and error pages like the 404
+    private static final String[] PUBLIC_PAGES = {"/", "/login", "/studentForm", "/styles.css", "/error"};
+
     // Spring's standard failure handling: redirect to /login?error and remember the error for the page
     private final SimpleUrlAuthenticationFailureHandler toErrorPage = new SimpleUrlAuthenticationFailureHandler("/login?error");
+
+    // Spring's standard refusal: HTTP 403, which shows templates/error.html
+    private final AccessDeniedHandler send403 = new AccessDeniedHandlerImpl();
 
     @Bean // The rules every request passes through before it reaches a controller
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -22,8 +40,7 @@ public class SecurityConfig {
             // Which pages need a signed-in student (FR-010-05 in specs/features/sign-in/requirements.md)
             // Rules are checked top to bottom and the first match wins, so anyRequest() has to stay last
             .authorizeHttpRequests(auth -> auth
-                // Home, sign-in, create a profile (GET and POST), the stylesheet, and error pages like the 404
-                .requestMatchers("/", "/login", "/studentForm", "/styles.css", "/error").permitAll()
+                .requestMatchers(PUBLIC_PAGES).permitAll()
                 .anyRequest().authenticated() // every other page needs a signed-in student
             )
             // Sign-in form: POST /login with the fields "email" and "password" (fixed names in design.md)
@@ -41,8 +58,24 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutSuccessUrl("/")
                 .permitAll()
-            );
+            )
+            // What a refused request gets back, see handleRefused below
+            .exceptionHandling(errors -> errors.accessDeniedHandler(this::handleRefused));
         return http.build();
+    }
+
+    // A form left open after signing out or a session timeout has a stale CSRF token, and the CSRF check runs before
+    // the sign-in check. So a signed-out visitor posting to a page that needs sign-in is sent to sign in (FR-002-04).
+    // The request is refused and nothing is saved either way, and everyone else still gets the 403 (NFR-010-03)
+    private void handleRefused(HttpServletRequest request, HttpServletResponse response, AccessDeniedException refused)
+            throws IOException, ServletException {
+        boolean signedOut = SecurityContextHolder.getContext().getAuthentication() == null; // nothing is set yet at the CSRF check
+        String page = request.getRequestURI().substring(request.getContextPath().length());
+        if (refused instanceof CsrfException && signedOut && !List.of(PUBLIC_PAGES).contains(page)) {
+            response.sendRedirect(request.getContextPath() + "/login");
+        } else {
+            send403.handle(request, response, refused);
+        }
     }
 
     @Bean // BCrypt hashes passwords when they're saved and checks them at sign-in (FR-010-02)

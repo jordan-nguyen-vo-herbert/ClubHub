@@ -92,6 +92,7 @@ classDiagram
         +clubFormSubmit(ClubForm, BindingResult, StudentPrincipal, Model, RedirectAttributes) String
         +myClubs(StudentPrincipal, Model) String
         -signedInStudent(StudentPrincipal) Student
+        -addFounder(Model, Student) void
     }
     class ClubForm {
         -String clubName
@@ -134,7 +135,8 @@ classDiagram
   - `ClubController.signedInStudent` (private) loads the `Student` for the principal's `studentId`. Every method that needs the founder goes through it, so there is one place that decides who the founder is.
   - `ClubController.myClubs` lists the signed-in student's clubs, newest first, as `ClubResponse` objects (FR-002-07, NFR-002-02).
   - `ClubController.clubPage` doesn't change. A flash attribute reaches the model of the page the browser is redirected to, so `club.html` can read `registered` directly.
-  - The signed-out scenarios need no new code: `/clubForm` and `/clubs/mine` are not on the public list in `SecurityConfig` (FR-010-05), so Spring Security redirects to `/login` before `ClubController` runs (FR-002-04).
+  - `/clubForm` and `/clubs/mine` are not on the public list in `SecurityConfig` (FR-010-05), so Spring Security redirects a signed-out visitor to `/login` before `ClubController` runs (FR-002-04).
+  - `SecurityConfig.handleRefused` covers the one case that rule misses. A form left open after signing out or a session timeout has a stale CSRF token, and the CSRF check runs before the sign-in check, so the visitor would otherwise get a 403. It sends them to `/login` instead, and nothing is saved. Every other refused request keeps the 403 from NFR-010-03: a bad token on a public form, or from a signed-in student.
 - **Important interactions (fixed names for front-end and test work):**
 
   | What | Name or URL |
@@ -150,5 +152,5 @@ classDiagram
   - Every signed-in student has a profile, because sign-in looks the student up by email. If the profile is missing anyway, the request fails with HTTP 403 instead of saving a club without a founder.
   - "Newest first" sorts by `clubID`, which the database assigns in increasing order. FR-002.6 records the submission time, and the order can switch to it then.
   - `/clubs/mine` doesn't clash with `/clubs/{clubID}`: Spring picks an exact path over a pattern, as it already does for `/clubs/search`.
-  - Tests that submit the form sign in as a real student with `with(user(new StudentPrincipal(student)))`, because the founder now comes from the principal. `@WithMockUser` has no student behind it.
+  - Tests that open the form, submit it or open My Club Requests sign in as a saved student with `with(user(new StudentPrincipal(student)))`, because the founder comes from the principal. `@WithMockStudent` (FR-010.2) is made up and never saved, so these pages refuse it with HTTP 403.
   - Not in this feature: hiding pending clubs from other students and from search (FR-009.1, #62, Sprint 3, once clubs can be approved), and the meeting info, faculty advisor and contact email fields, duplicate names and invalid categories (FR-002.6, #52).

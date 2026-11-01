@@ -28,12 +28,8 @@
                 <!--/* maxlength matches the 1000 character column in Club.java */-->
                 <textarea th:field="*{description}" rows="5" maxlength="1000" required></textarea>
             </div>
-            <div>
-                <label for="founderStudentNumber">Founder's WSU ID</label>
-                <input type="text" th:field="*{founderStudentNumber}" required />
-                <!--/* Only rendered when the controller finds no student with this WSU ID */-->
-                <p class="error" th:if="${#fields.hasErrors('founderStudentNumber')}" th:errors="*{founderStudentNumber}">WSU ID error</p>
-            </div>
+            <!--/* Plain text, not a field: the founder is always the signed-in student (FR-002-02) */-->
+            <p>Founding officer: <span th:text="${founderName}">First Last</span> (<span th:text="${founderEmail}">name@wsu.edu</span>)</p>
             <button type="submit">Register club</button>
         </form>
     </section>

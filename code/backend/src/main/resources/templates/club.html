@@ -9,6 +9,11 @@
 <body>
     <header th:replace="~{fragments/nav :: header}"></header>
     <section>
+        <!--/* Only right after registering, a flash attribute lasts for one page view (FR-002-05). Plain for now, Daniel styles it in FR-002.8 */-->
+        <p th:if="${registered}">
+            Your club registration was submitted and is waiting for approval.
+            <a th:href="@{/clubs/mine}">My Club Requests</a>
+        </p>
         <h1 th:text="${club.clubName}">Club Name</h1>
         <ul>
             <li>Area of interest: <span th:text="${club.areaOfInterest.area}">Area</span></li>

@@ -22,7 +22,7 @@
 
 ### Tests
 - [ ] `validation.md` for this folder (SDD-5, #48, Daniel)
-- [ ] Automated tests from `validation.md` (TEST-011, #60, Daniel)
+- [x] Automated tests from `validation.md` (TEST-011, #60, Daniel)
 
 ## Files to Create or Modify
 

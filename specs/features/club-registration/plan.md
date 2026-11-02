@@ -30,7 +30,7 @@
 - [ ] FR-009.1 (#62, Sprint 3): when pending clubs are hidden from other students, keep showing a pending club to its founder ("Submitter can view their pending club")
 
 ### Tests
-- [ ] `validation.md` for this folder (TEST-012, #61, Daniel)
+- [x] `validation.md` for this folder (TEST-012, #61, Daniel)
 - [ ] Automated tests from `validation.md` (TEST-012, #61, Daniel)
 
 ## Files to Create or Modify

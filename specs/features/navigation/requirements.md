@@ -17,7 +17,7 @@ Navigation and error pages (FR-006 Working Webpage/User Interface, #10), a singl
 Every page shall show the same navigation header. It shall always link to Home (`/`), Search clubs (`/clubs/search`) and Register a club (`/clubForm`). The remaining links depend on sign-in:
 
 - Before sign-in (FR-010) is merged, it shall also link to Create a student profile (`/studentForm`) and My student profile (`/profile`).
-- Once FR-010 is merged, a signed-out visitor shall also see Create a student profile and Sign in (FR-006-08), and a signed-in student shall also see My student profile, their first name and Sign out (FR-010-11). Create a student profile is hidden from signed-in students, because creating a profile while signed in would make a second account and sign the browser in as the new student.
+- Once FR-010 is merged, a signed-out visitor shall also see Create a student profile and Sign in (FR-006-08), and a signed-in student shall also see My student profile, My Club Requests (`/clubs/mine`, FR-002-07), their first name and Sign out (FR-010-11). Create a student profile is hidden from signed-in students, because creating a profile while signed in would make a second account and sign the browser in as the new student.
 
 ## Functional Requirement: FR-006-02
 The home page shall list the same destinations as the navigation header, each with a link.

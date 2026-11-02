@@ -16,7 +16,7 @@ Test cases are numbered TC-006-xx, after the feature's requirement IDs (FR-006-x
 
 **Steps:**
 1. Open the home page (`/`).
-2. Click each destination the home page lists: "Search clubs", "Register a club" and "My student profile".
+2. Click each destination the home page lists: "Search clubs", "Register a club", "My student profile" and "My Club Requests".
 3. Repeat step 2 with every link in the navigation header.
 
 **Expected Result:** Each link opens its page with HTTP 200, and the page's title follows "Page name - ClubHub". No link leads to the not-found page.  
@@ -64,7 +64,7 @@ Test cases are numbered TC-006-xx, after the feature's requirement IDs (FR-006-x
 1. Open `/` and `/studentForm`.
 2. Sign in as Butch, then open `/` and `/clubs/search`.
 
-**Expected Result:** In step 1, the header shows "Create a student profile" and "Sign in" (`/login`), and does not show "My student profile" or "Sign out". In step 2, the header shows "My student profile", the first name "Butch" and "Sign out", and does not show "Create a student profile" or "Sign in".  
+**Expected Result:** In step 1, the header shows "Create a student profile" and "Sign in" (`/login`), and does not show "My student profile" or "Sign out". In step 2, the header shows "My student profile", "My Club Requests", the first name "Butch" and "Sign out", and does not show "Create a student profile" or "Sign in".  
 **Status:** Not run
 
 ## Test Case: TC-006-06 Page does not exist

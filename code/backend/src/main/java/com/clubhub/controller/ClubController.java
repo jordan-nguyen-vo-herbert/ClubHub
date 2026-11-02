@@ -10,16 +10,12 @@ import com.clubhub.entities.Member;
 import com.clubhub.entities.Student; // for the founder, the signed-in student
 import com.clubhub.repository.ClubRepository;
 import com.clubhub.repository.StudentRepository;
-<<<<<<< HEAD
-import com.clubhub.security.StudentPrincipal;
-=======
 import com.clubhub.repository.MemberRepository;
 import com.clubhub.repository.MembershipRequestRepository;
 import com.clubhub.security.StudentPrincipal;
 import com.clubhub.repository.MembershipRequestRepository;
 import com.clubhub.entities.MembershipRequest;
 import com.clubhub.entities.RequestStatus;
->>>>>>> 15377d7 (added and modified files to include add and remove member options, student request to join, and edge cases)
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,25 +33,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-<<<<<<< HEAD
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-=======
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.transaction.annotation.Transactional;
->>>>>>> 15377d7 (added and modified files to include add and remove member options, student request to join, and edge cases)
 
 // /clubs/{clubID}
 @Controller // Tells Spring that this handles club-related requests and returns Thymeleaf pages
 public class ClubController {
     private final ClubRepository clubRepository;
-<<<<<<< HEAD
-    private final StudentRepository studentRepository; // to load the signed-in student, a new club's founder
-=======
     private final StudentRepository studentRepository; // to look up a club's founder by WSU ID
     private final MemberRepository memberRepository;
     private final MembershipRequestRepository membershipRequestRepository;
->>>>>>> 15377d7 (added and modified files to include add and remove member options, student request to join, and edge cases)
 
     public ClubController(ClubRepository clubRepository, StudentRepository studentRepository, MemberRepository memberRepository, MembershipRequestRepository membershipRequestRepository) { // Spring passes in both repositories automatically
         this.clubRepository = clubRepository;

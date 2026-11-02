@@ -31,7 +31,7 @@
 
 ### Tests
 - [x] `validation.md` for this folder (TEST-012, #61, Daniel)
-- [ ] Automated tests from `validation.md` (TEST-012, #61, Daniel)
+- [x] Automated tests from `validation.md` (TEST-012, #61, Daniel)
 
 ## Files to Create or Modify
 

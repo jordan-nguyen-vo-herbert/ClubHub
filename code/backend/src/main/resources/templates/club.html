@@ -20,6 +20,12 @@
             <li>Status: <span th:text="${club.status.status}">Pending</span></li>
         </ul>
         <p th:text="${club.description}">Description</p>
+        <!--/* Registration details from FR-002.6. Meeting info and the advisor are optional */-->
+        <ul>
+            <li>Meeting info: <span th:text="${club.meetingInfo} ?: 'Not provided'">Tuesdays 6 PM</span></li>
+            <li>Faculty advisor: <span th:text="${club.facultyAdvisor} ?: 'Not provided'">Dr. Advisor</span></li>
+            <li th:if="${club.contactEmail}">Contact: <a th:href="'mailto:' + ${club.contactEmail}" th:text="${club.contactEmail}">club@wsu.edu</a></li>
+        </ul>
         <h2>Members</h2>
         <p th:if="${#lists.isEmpty(club.members)}">No members yet.</p>
         <!--/* Each member links to their student profile */-->

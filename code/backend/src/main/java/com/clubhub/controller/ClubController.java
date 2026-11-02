@@ -66,7 +66,62 @@ public class ClubController {
                     m.getStudent().getLastName(), club.getClubID(), m.getRole()));
         }
         return new ClubResponse(club.getClubID(), club.getClubName(), club.getAreaOfInterest(),
-                club.getDescription(), club.getStatus(), members);
+                club.getDescription(), club.getMeetingInfo(), club.getFacultyAdvisor(), club.getContactEmail(),
+                club.getSubmittedAt(), club.getStatus(), members);
+    }
+
+    /**
+     * Checks a club registration on the server, so a request that skips the browser's checks is still refused
+     * (FR-002.6). Each problem is attached to its own field, so the form shows it next to that field.
+     * An area of interest that isn't in the list never reaches this method as a value: Spring records it as a
+     * conversion error, whose message is in messages.properties.
+     *
+     * @param form   what the student submitted
+     * @param result where field errors are recorded
+     */
+    private void checkRegistration(ClubForm form, BindingResult result) {
+        String clubName = trimmed(form.getClubName());
+        if (clubName.isEmpty()) {
+            result.rejectValue("clubName", "required", "Enter a club name");
+        } else if (clubRepository.existsByClubNameIgnoreCase(clubName)) {
+            result.rejectValue("clubName", "duplicate", "A club with this name already exists");
+        }
+
+        if (form.getAreaOfInterest() == null && !result.hasFieldErrors("areaOfInterest")) {
+            result.rejectValue("areaOfInterest", "required", "Choose an area of interest from the list");
+        }
+
+        if (trimmed(form.getDescription()).isEmpty()) {
+            result.rejectValue("description", "required", "Enter a description");
+        }
+
+        String contactEmail = trimmed(form.getContactEmail());
+        if (contactEmail.isEmpty()) {
+            result.rejectValue("contactEmail", "required", "Enter a contact email");
+        } else if (!contactEmail.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+            result.rejectValue("contactEmail", "invalid", "Enter a valid email, like name@wsu.edu");
+        }
+    }
+
+    /**
+     * Returns the value without surrounding spaces, or an empty string for a missing value.
+     *
+     * @param value a submitted form value, may be null
+     * @return the trimmed value, never null
+     */
+    private static String trimmed(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    /**
+     * Returns the trimmed value, or null when it is blank, so an optional field left empty is stored as null.
+     *
+     * @param value a submitted form value, may be null
+     * @return the trimmed value, or null
+     */
+    private static String blankToNull(String value) {
+        String trimmedValue = trimmed(value);
+        return trimmedValue.isEmpty() ? null : trimmedValue;
     }
 
     // The Student behind the signed-in user, the only place a founder comes from, never a value the browser sends (NFR-002-01)
@@ -96,12 +151,15 @@ public class ClubController {
     public String clubFormSubmit(@ModelAttribute ClubForm newForm, BindingResult result, // result holds form errors, must come right after the form
             @AuthenticationPrincipal StudentPrincipal principal, Model model, RedirectAttributes redirectAttributes) {
         Student founder = signedInStudent(principal);
-        // A value Spring couldn't convert -> show the form again with what they typed
+        checkRegistration(newForm, result);
+        // Any error (a value Spring couldn't convert, or a check in checkRegistration) -> show the form again with what they typed
         if (result.hasErrors()) {
             addFounder(model, founder);
             return "clubForm";
         }
-        Club club = new Club(newForm.getClubName(), newForm.getAreaOfInterest(), newForm.getDescription(), founder);
+        Club club = new Club(trimmed(newForm.getClubName()), newForm.getAreaOfInterest(), newForm.getDescription(),
+                blankToNull(newForm.getMeetingInfo()), blankToNull(newForm.getFacultyAdvisor()),
+                trimmed(newForm.getContactEmail()), founder);
         club.addMember(founder, ClubRole.PRESIDENT); // founder is the first member, saved along with the club (cascade)
         Club saved = clubRepository.save(club); // database assigns the clubID
         redirectAttributes.addFlashAttribute("registered", true); // reaches the next page only, club.html shows the success message (FR-002-05)

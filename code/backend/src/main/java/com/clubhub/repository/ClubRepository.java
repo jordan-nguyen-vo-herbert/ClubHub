@@ -28,4 +28,6 @@ public interface ClubRepository extends CrudRepository<Club, Long> {
         @Param("keyword") String keyword,
         @Param("area") AreaOfInterest area
     );
+    // My Club Requests: the clubs a student founded, newest first (founder.id, sorted by clubID from high to low)
+    List<Club> findByFounderIdOrderByClubIDDesc(Long founderId);
 }

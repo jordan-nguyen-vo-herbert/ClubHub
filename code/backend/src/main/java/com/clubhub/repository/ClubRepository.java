@@ -30,4 +30,15 @@ public interface ClubRepository extends CrudRepository<Club, Long> {
     );
     // My Club Requests: the clubs a student founded, newest first (founder.id, sorted by clubID from high to low)
     List<Club> findByFounderIdOrderByClubIDDesc(Long founderId);
+    @Query("""
+        SELECT c FROM Club c
+        WHERE (:keyword IS NULL OR :keyword = ''
+        OR LOWER(c.clubName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(c.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
+        AND (:area IS NULL OR c.areaOfInterest = :area)
+    """)
+    List<Club> searchClubs(
+        @Param("keyword") String keyword,
+        @Param("area") AreaOfInterest area
+    );
 }

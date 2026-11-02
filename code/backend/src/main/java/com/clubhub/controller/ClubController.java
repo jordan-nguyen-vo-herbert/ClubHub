@@ -10,12 +10,22 @@ import com.clubhub.entities.Member;
 import com.clubhub.entities.Student; // for the founder, the signed-in student
 import com.clubhub.repository.ClubRepository;
 import com.clubhub.repository.StudentRepository;
+<<<<<<< HEAD
 import com.clubhub.security.StudentPrincipal;
+=======
+import com.clubhub.repository.MemberRepository;
+import com.clubhub.repository.MembershipRequestRepository;
+import com.clubhub.security.StudentPrincipal;
+import com.clubhub.repository.MembershipRequestRepository;
+import com.clubhub.entities.MembershipRequest;
+import com.clubhub.entities.RequestStatus;
+>>>>>>> 15377d7 (added and modified files to include add and remove member options, student request to join, and edge cases)
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,17 +37,31 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+<<<<<<< HEAD
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+=======
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
+>>>>>>> 15377d7 (added and modified files to include add and remove member options, student request to join, and edge cases)
 
 // /clubs/{clubID}
 @Controller // Tells Spring that this handles club-related requests and returns Thymeleaf pages
 public class ClubController {
     private final ClubRepository clubRepository;
+<<<<<<< HEAD
     private final StudentRepository studentRepository; // to load the signed-in student, a new club's founder
+=======
+    private final StudentRepository studentRepository; // to look up a club's founder by WSU ID
+    private final MemberRepository memberRepository;
+    private final MembershipRequestRepository membershipRequestRepository;
+>>>>>>> 15377d7 (added and modified files to include add and remove member options, student request to join, and edge cases)
 
-    public ClubController(ClubRepository clubRepository, StudentRepository studentRepository) { // Spring passes in both repositories automatically
+    public ClubController(ClubRepository clubRepository, StudentRepository studentRepository, MemberRepository memberRepository, MembershipRequestRepository membershipRequestRepository) { // Spring passes in both repositories automatically
         this.clubRepository = clubRepository;
         this.studentRepository = studentRepository;
+        this.memberRepository = memberRepository;
+        this.membershipRequestRepository = membershipRequestRepository;
     }
 
     // Dropdown options for the club form and the area search, available in the template as ${areaOptions}
@@ -127,39 +151,292 @@ public class ClubController {
         return "clubs"; // renders templates/clubs.html, ${clubs} is missing until the user searches
     }
 
-    @GetMapping("/clubs/search/name") // GET: e.g. /clubs/search/name?name=chess
-    public String searchByName(@RequestParam String name, Model model) { // name comes from ?name=... in the URL
-        List<Club> found = clubRepository.findByClubNameContainingIgnoreCase(name); // matching Club entities
-        List<ClubResponse> clubs = new ArrayList<>();
-        for (Club club : found) {
-            clubs.add(toClubResponse(club)); // convert each Club to a DTO (no Student entities/passwords)
-        }
-        model.addAttribute("clubs", clubs); // available in the template as ${clubs}
-        return "clubs"; // renders templates/clubs.html (Yohann)
-    }
-
-    @GetMapping("/clubs/search/area") // GET: e.g. /clubs/search/area?area=BUSINESS
-    public String searchByArea(@RequestParam AreaOfInterest area, Model model) { // Spring converts "BUSINESS" to AreaOfInterest.BUSINESS
-        List<Club> found = clubRepository.findByAreaOfInterest(area); // matching Club entities
-        List<ClubResponse> clubs = new ArrayList<>();
-        for (Club club : found) { // for every club found, add to result
-            clubs.add(toClubResponse(club)); // convert each Club to a DTO (no Student entities/passwords)
-        }
-        model.addAttribute("clubs", clubs); // available in the template as ${clubs}
-        return "clubs"; // renders templates/clubs.html (Yohann)
-    }
     @GetMapping("/clubs/search/filter")
-    public String searchByKeywordAndArea(
-        @RequestParam String keyword,
-        @RequestParam AreaOfInterest area,
+    public String searchClubs(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) AreaOfInterest area,
         Model model) {
 
-        List<Club> found = clubRepository.searchByKeywordAndArea(keyword.trim(), area);
+        // Handle empty keyword
+        if (keyword != null && keyword.isBlank()) {
+            keyword = null;
+        }
+        List<Club> found = clubRepository.searchClubs(keyword, area);
         List<ClubResponse> clubs = new ArrayList<>();
         for (Club club : found) {
             clubs.add(toClubResponse(club));
         }
+
         model.addAttribute("clubs", clubs);
+
         return "clubs";
+    }
+    private boolean isClubOfficer(Long clubID, Long studentID) {
+        Optional<Club> club = clubRepository.findById(clubID);
+        if (club.isEmpty()) {
+            return false;
+        }
+
+        Optional<Student> student = studentRepository.findById(studentID);
+        if (student.isEmpty()) {
+            return false;
+        }
+
+        Optional<Member> membership =
+            memberRepository.findByStudentAndClub(student.get(), club.get());
+        if (membership.isEmpty()) {
+            return false;
+        }
+        ClubRole role = membership.get().getRole();
+        return role != ClubRole.REGULARMEMBER;
+    }
+    @GetMapping("/clubs/{clubID}/manage")
+    public String manageMembers(
+        @PathVariable Long clubID,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        Model model) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        if (!isClubOfficer(clubID, principal.getStudentId())) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN, "You are not authorized to manage this club");
+        }  
+
+        Club club = clubRepository.findById(clubID)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Club not found"));
+
+        List<Member> members = memberRepository.findByClub(club);
+
+        model.addAttribute("club", club);
+        model.addAttribute("members", members);
+
+        return "clubMembers";
+    }
+    @PostMapping("/clubs/{clubID}/manage/add")
+    public String addMember(
+        @PathVariable Long clubID,
+        @RequestParam(required = false) String studentNumber,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        if (!isClubOfficer(clubID, principal.getStudentId())) {
+            throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN, "You are not authorized to manage this club");
+        }
+        if (studentNumber == null || studentNumber.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Please enter a WSU ID.");
+            return "redirect:/clubs/" + clubID + "/manage";
+        }
+        Club club = clubRepository.findById(clubID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Club not found"));
+
+        Student student = studentRepository.findByStudentNumber(studentNumber.trim())
+            .orElse(null);
+
+        if (student == null) {
+            redirectAttributes.addFlashAttribute("error", "No student found with that WSU ID.");
+            return "redirect:/clubs/" + clubID + "/manage";
+        }
+        if (memberRepository.findByStudentAndClub(student, club).isPresent()) {
+            redirectAttributes.addFlashAttribute("error", "This student is already a member.");
+            return "redirect:/clubs/" + clubID + "/manage";
+        }
+        club.addMember(student, ClubRole.REGULARMEMBER);
+        clubRepository.save(club);
+        redirectAttributes.addFlashAttribute("success", "Member successfully added!");
+        return "redirect:/clubs/" + clubID + "/manage";
+    }
+    @PostMapping("/clubs/{clubID}/manage/remove/{memberID}")
+    public String removeMember(
+        @PathVariable Long clubID,
+        @PathVariable Long memberID,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        if (!isClubOfficer(clubID, principal.getStudentId())) {
+            throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN, "You are not authorized to manage this club");
+        }
+        Club club = clubRepository.findById(clubID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Club not found"));
+
+        Member member = memberRepository.findById(memberID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Member not found"));
+
+        // Make sure the membership belongs to this club
+        if (!member.getClub().getClubID().equals(clubID)) {
+            throw new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Member not found in this club");
+        }
+        memberRepository.delete(member);
+        redirectAttributes.addFlashAttribute("success", "Member successfully removed!");
+        return "redirect:/clubs/" + clubID + "/manage";
+    }
+    @PostMapping("/clubs/{clubID}/request")
+    public String requestToJoin(
+        @PathVariable Long clubID,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        Club club = clubRepository.findById(clubID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Club not found"));
+
+        Student student = studentRepository.findById(principal.getStudentId())
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Student not found"));
+
+        // Check whether the student is already a member
+        if (memberRepository.findByStudentAndClub(student, club).isPresent()) {
+            redirectAttributes.addFlashAttribute(
+            "error", "You are already a member of this club.");
+            return "redirect:/clubs/" + clubID;
+        }
+        // Check whether the student already has a pending request
+        if (membershipRequestRepository
+            .findByStudentAndClubAndStatus(
+            student, club, RequestStatus.PENDING).isPresent()) {
+            redirectAttributes.addFlashAttribute(
+            "error", "You already have a pending request for this club.");
+            return "redirect:/clubs/" + clubID;
+        }
+        // Create and save the request
+        MembershipRequest request = new MembershipRequest(student, club);
+        membershipRequestRepository.save(request);
+        redirectAttributes.addFlashAttribute(
+        "success", "Your membership request has been submitted!");
+        return "redirect:/clubs/" + clubID;
+    }
+    @GetMapping("/clubs/{clubID}/requests")
+    public String viewMembershipRequests(
+        @PathVariable Long clubID,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        Model model) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        if (!isClubOfficer(clubID, principal.getStudentId())) {
+            throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not authorized to view membership requests");
+        }
+        Club club = clubRepository.findById(clubID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Club not found"));
+
+        List<MembershipRequest> requests =
+            membershipRequestRepository.findByClubAndStatus(
+            club, RequestStatus.PENDING);
+        model.addAttribute("club", club);
+        model.addAttribute("requests", requests);
+
+        return "membershipRequests";
+    }
+    @Transactional
+    @PostMapping("/clubs/{clubID}/requests/{requestID}/accept")
+    public String acceptRequest(
+        @PathVariable Long clubID,
+        @PathVariable Long requestID,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        if (!isClubOfficer(clubID, principal.getStudentId())) {
+            throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not authorized to manage membership requests");
+        }
+        Club club = clubRepository.findById(clubID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Club not found"));
+
+        MembershipRequest request = membershipRequestRepository.findById(requestID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Request not found"));
+
+        // Make sure the request belongs to this club
+        if (!request.getClub().getClubID().equals(clubID)) {
+            throw new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Request not found in this club");
+        }
+        // Only pending requests can be accepted
+        if (request.getStatus() != RequestStatus.PENDING) {
+            redirectAttributes.addFlashAttribute(
+            "error", "This request has already been processed.");
+
+            return "redirect:/clubs/" + clubID + "/requests";
+        }
+        // Make sure the student isn't already a member
+        if (memberRepository.findByStudentAndClub(
+            request.getStudent(), club).isEmpty()) {
+
+            club.addMember(request.getStudent(), ClubRole.REGULARMEMBER);
+            clubRepository.save(club);
+        }
+        request.accept();
+        membershipRequestRepository.save(request);
+        redirectAttributes.addFlashAttribute(
+        "success", "Membership request accepted!");
+        return "redirect:/clubs/" + clubID + "/requests";
+    }
+    @PostMapping("/clubs/{clubID}/requests/{requestID}/reject")
+    public String rejectRequest(
+        @PathVariable Long clubID,
+        @PathVariable Long requestID,
+        @AuthenticationPrincipal StudentPrincipal principal,
+        RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        if (!isClubOfficer(clubID, principal.getStudentId())) {
+            throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not authorized to manage membership requests");
+        }
+
+        MembershipRequest request = membershipRequestRepository.findById(requestID)
+            .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Request not found"));
+
+        if (!request.getClub().getClubID().equals(clubID)) {
+            throw new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Request not found in this club");
+        }
+
+        if (request.getStatus() != RequestStatus.PENDING) {
+            redirectAttributes.addFlashAttribute(
+            "error", "This request has already been processed.");
+
+            return "redirect:/clubs/" + clubID + "/requests";
+        }
+
+        request.reject();
+        membershipRequestRepository.save(request);
+
+        redirectAttributes.addFlashAttribute(
+        "success", "Membership request rejected.");
+
+        return "redirect:/clubs/" + clubID + "/requests";
     }
 }

@@ -112,6 +112,11 @@ button {
     font-size: 0.9rem;
 }
 
+/* The * after the label of a required field (clubForm.html) */
+.required-mark {
+    color: #b00020;
+}
+
 /* Error pages: the status code and its name, for example "400 Bad Request" */
 .status-code {
     font-size: 1.1rem;

@@ -15,4 +15,6 @@ public interface ClubRepository extends CrudRepository<Club, Long> {
     List<Club> findByAreaOfInterest(AreaOfInterest areaOfInterest);
     // My Club Requests: the clubs a student founded, newest first (founder.id, sorted by clubID from high to low)
     List<Club> findByFounderIdOrderByClubIDDesc(Long founderId);
+    // Registration: true if a club already has this name, ignoring capitalization (FR-002.6)
+    boolean existsByClubNameIgnoreCase(String clubName);
 }

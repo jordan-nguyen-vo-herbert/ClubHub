@@ -11,6 +11,10 @@ public class ClubForm {
     private String clubName;
     private AreaOfInterest areaOfInterest;
     private String description;
+    // FR-002.6: meetingInfo and facultyAdvisor are optional, contactEmail is required
+    private String meetingInfo;
+    private String facultyAdvisor;
+    private String contactEmail;
 
     // Setters
 
@@ -26,6 +30,18 @@ public class ClubForm {
         this.description = description;
     }
 
+    public void setMeetingInfo(String meetingInfo) {
+        this.meetingInfo = meetingInfo;
+    }
+
+    public void setFacultyAdvisor(String facultyAdvisor) {
+        this.facultyAdvisor = facultyAdvisor;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
     // Getters
 
     public String getClubName() {
@@ -38,5 +54,17 @@ public class ClubForm {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getMeetingInfo() {
+        return meetingInfo;
+    }
+
+    public String getFacultyAdvisor() {
+        return facultyAdvisor;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
     }
 }

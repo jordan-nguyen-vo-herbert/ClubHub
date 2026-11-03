@@ -131,7 +131,7 @@ classDiagram
   | Links shown to everyone | "Home" `/`, "Search clubs" `/clubs/search`, "Register a club" `/clubForm` |
   | Links before FR-010 | "Create a student profile" `/studentForm`, "My student profile" `/profile` |
   | Signed-out links (after FR-010) | "Create a student profile" `/studentForm` and "Sign in" `/login`, inside `sec:authorize="isAnonymous()"` |
-  | Signed-in links (after FR-010) | "My student profile" `/profile`, the first name and the "Sign out" button, inside `sec:authorize="isAuthenticated()"` (FR-010-11) |
+  | Signed-in links (after FR-010) | "My student profile" `/profile`, "My Club Requests" `/clubs/mine` (FR-002-07), the first name and the "Sign out" button, inside `sec:authorize="isAuthenticated()"` (FR-010-11) |
   | Not-found page | `templates/error/404.html`, HTTP 404, text "This page could not be loaded" |
   | General error page | `templates/error.html`, the original HTTP status, shows `${status}` and `${error}` |
   | Link home on error pages | `<a th:href="@{/}">Back to home</a>` |

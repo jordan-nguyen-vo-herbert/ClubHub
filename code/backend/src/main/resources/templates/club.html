@@ -10,14 +10,17 @@
     <header th:replace="~{fragments/nav :: header}"></header>
     <section>
         <!--/* Only right after registering, a flash attribute lasts for one page view (FR-002-05). Plain for now, Daniel styles it in FR-002.8 */-->
-        <p th:if="${registered}">
+        <div class="success" role="status" th:if="${registered}">
+            <strong>Registration submitted.</strong>
             Your club registration was submitted and is waiting for approval.
-            <a th:href="@{/clubs/mine}">My Club Requests</a>
-        </p>
+            <a th:href="@{/clubs/mine}">View My Club Requests</a>
+        </div>
         <h1 th:text="${club.clubName}">Club Name</h1>
         <ul>
             <li>Area of interest: <span th:text="${club.areaOfInterest.area}">Area</span></li>
-            <li>Status: <span th:text="${club.status.status}">Pending</span></li>
+            <!--/* The badge's color follows the status: status-pending, status-approved or status-rejected */-->
+            <li>Status: <span class="status-badge" th:classappend="${'status-' + #strings.toLowerCase(club.status.name())}"
+                              th:text="${club.status.status}">Pending</span></li>
         </ul>
         <p th:text="${club.description}">Description</p>
         <!--/* Registration details from FR-002.6. Meeting info and the advisor are optional */-->

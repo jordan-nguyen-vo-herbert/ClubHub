@@ -15,6 +15,8 @@
             <!--/* Signed out only: creating a profile while signed in would make a second account (FR-006-01) */-->
             <a sec:authorize="isAnonymous()" th:href="@{/studentForm}">Create a student profile</a>
             <a sec:authorize="isAuthenticated()" th:href="@{/profile}">My student profile</a>
+            <!--/* The clubs this student registered and their status (FR-002-07) */-->
+            <a sec:authorize="isAuthenticated()" th:href="@{/clubs/mine}">My Club Requests</a>
         </nav>
         <!--/* Sign-in state on the right (FR-010-11, FR-006-08) */-->
         <div class="site-user">

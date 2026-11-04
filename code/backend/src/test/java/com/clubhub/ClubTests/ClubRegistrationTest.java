@@ -74,6 +74,7 @@ public class ClubRegistrationTest {
                 .param("clubName", "Founder Test Club")
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
                 .param("description", "Testing who the founder is")
+                .param("contactEmail", "founder.test@wsu.edu")
                 .param("founderStudentNumber", otherStudent.getStudentNumber()))
 
                 .andExpect(status().is3xxRedirection());
@@ -112,7 +113,8 @@ public void registrationCreatesFivePendingClubsWithFounderAsPresident()
                 .with(user(new StudentPrincipal(student)))
                 .param("clubName", clubName)
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
-                .param("description", "Testing club registration " + i))
+                .param("description", "Testing club registration " + i)
+                .param("contactEmail", "test005@wsu.edu"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/clubs/*"));
     }

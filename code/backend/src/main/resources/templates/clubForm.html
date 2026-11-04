@@ -10,23 +10,45 @@
     <header th:replace="~{fragments/nav :: header}"></header>
     <section>
         <h1>Register a Club</h1>
-        <!--/* th:object binds the form to ${clubForm}, each *{field} must match a field in ClubForm.java */-->
+        <p class="hint">Fields marked <span class="required-mark">*</span> are required.</p>
+        <!--/* th:object binds the form to ${clubForm}, each *{field} must match a field in ClubForm.java
+             th:field keeps what the student typed when the server sends the form back with errors (FR-002.6) */-->
         <form th:action="@{/clubForm}" th:object="${clubForm}" method="post">
             <div>
-                <label for="clubName">Club name</label>
+                <label for="clubName">Club name <span class="required-mark" aria-hidden="true">*</span></label>
                 <input type="text" th:field="*{clubName}" required />
+                <!--/* Blank, or a club with this name already exists */-->
+                <p class="error" th:if="${#fields.hasErrors('clubName')}" th:errors="*{clubName}">Club name error</p>
             </div>
             <div>
-                <label for="areaOfInterest">Area of interest</label>
+                <label for="areaOfInterest">Area of interest <span class="required-mark" aria-hidden="true">*</span></label>
                 <select th:field="*{areaOfInterest}" required>
                     <option value="">-- Select --</option>
                     <option th:each="a : ${areaOptions}" th:value="${a}" th:text="${a.area}">Area</option>
                 </select>
+                <!--/* Missing, or not one of the listed areas */-->
+                <p class="error" th:if="${#fields.hasErrors('areaOfInterest')}" th:errors="*{areaOfInterest}">Area error</p>
             </div>
             <div>
-                <label for="description">Description</label>
+                <label for="description">Description <span class="required-mark" aria-hidden="true">*</span></label>
                 <!--/* maxlength matches the 1000 character column in Club.java */-->
                 <textarea th:field="*{description}" rows="5" maxlength="1000" required></textarea>
+                <p class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description error</p>
+            </div>
+            <div>
+                <label for="meetingInfo">Meeting info</label>
+                <input type="text" th:field="*{meetingInfo}" placeholder="e.g. Tuesdays 6 PM, Sloan 175" />
+                <p class="error" th:if="${#fields.hasErrors('meetingInfo')}" th:errors="*{meetingInfo}">Meeting info error</p>
+            </div>
+            <div>
+                <label for="facultyAdvisor">Faculty advisor</label>
+                <input type="text" th:field="*{facultyAdvisor}" />
+                <p class="error" th:if="${#fields.hasErrors('facultyAdvisor')}" th:errors="*{facultyAdvisor}">Faculty advisor error</p>
+            </div>
+            <div>
+                <label for="contactEmail">Contact email <span class="required-mark" aria-hidden="true">*</span></label>
+                <input type="email" th:field="*{contactEmail}" placeholder="club.name@wsu.edu" required />
+                <p class="error" th:if="${#fields.hasErrors('contactEmail')}" th:errors="*{contactEmail}">Contact email error</p>
             </div>
             <!--/* Plain text, not a field: the founder is always the signed-in student (FR-002-02) */-->
             <p>Founding officer: <span th:text="${founderName}">First Last</span> (<span th:text="${founderEmail}">name@wsu.edu</span>)</p>

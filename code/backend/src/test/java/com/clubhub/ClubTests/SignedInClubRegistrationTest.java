@@ -61,7 +61,8 @@ public class SignedInClubRegistrationTest {
         return mockMvc.perform(post("/clubForm").with(csrf()).with(user(new StudentPrincipal(student)))
                 .param("clubName", clubName)
                 .param("areaOfInterest", AreaOfInterest.values()[0].name())
-                .param("description", "A club for testing"));
+                .param("description", "A club for testing")
+                .param("contactEmail", "club.contact@wsu.edu"));
     }
 
     /**

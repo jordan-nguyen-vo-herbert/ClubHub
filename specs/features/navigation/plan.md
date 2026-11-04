@@ -21,7 +21,7 @@
 
 ### Tests
 - [x] `validation.md` for this folder (SDD-5, #48, Daniel)
-- [ ] Automated tests from `validation.md` (TEST-012, #61, Daniel), including the test that opens every header link (NFR-006-04) and the 404, 400 and "no technical details" checks
+- [x] Automated tests from `validation.md` (TEST-012, #61, Daniel), including the test that opens every header link (NFR-006-04) and the 404, 400 and "no technical details" checks
 
 ## Files to Create or Modify
 

@@ -1,5 +1,6 @@
 package com.clubhub.entities;
 // import com.clubhub.entities.Role;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,14 @@ public class Club {
     private AreaOfInterest areaOfInterest;
     @Column(length = 1000) // default is 255 characters, too short for a description
     private String description;
+    // When and where the club meets, e.g. "Tuesdays 6 PM, Sloan 175", optional (FR-002.6)
+    private String meetingInfo;
+    // The club's faculty advisor, optional (FR-002.6)
+    private String facultyAdvisor;
+    // The email students use to reach the club, required (FR-002.6)
+    private String contactEmail;
+    // When the registration was submitted, set once when the Club is created (FR-002.6)
+    private Instant submittedAt;
     // The student who applied to start the club
     @ManyToOne
     @JoinColumn(name = "founder_id")
@@ -52,10 +61,31 @@ public class Club {
     // No id parameter, the database generates it, members are added with addMember
     // New clubs are applications: status PENDING, no dateApproved yet
     public Club(String clubName, AreaOfInterest areaOfInterest, String description, Student founder) {
+        this(clubName, areaOfInterest, description, null, null, null, founder);
+    }
+
+    /**
+     * Creates a club registration with every field from the registration form (FR-002.6).
+     * The submission time is recorded here, so every new registration has one.
+     *
+     * @param clubName       the club's name
+     * @param areaOfInterest what the club is about
+     * @param description    what the club does
+     * @param meetingInfo    when and where the club meets, may be null
+     * @param facultyAdvisor the club's faculty advisor, may be null
+     * @param contactEmail   the email students use to reach the club
+     * @param founder        the signed-in student who registered the club
+     */
+    public Club(String clubName, AreaOfInterest areaOfInterest, String description, String meetingInfo,
+                String facultyAdvisor, String contactEmail, Student founder) {
         this.clubName = clubName;
         this.areaOfInterest = areaOfInterest;
         this.description = description;
+        this.meetingInfo = meetingInfo;
+        this.facultyAdvisor = facultyAdvisor;
+        this.contactEmail = contactEmail;
         this.founder = founder;
+        this.submittedAt = Instant.now();
     }
 
     // Creates the membership, saved to the database when the club is saved
@@ -83,6 +113,23 @@ public class Club {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public String getMeetingInfo() {
+        return this.meetingInfo;
+    }
+
+    public String getFacultyAdvisor() {
+        return this.facultyAdvisor;
+    }
+
+    public String getContactEmail() {
+        return this.contactEmail;
+    }
+
+    // Returns null only for a club saved before FR-002.6 added the field
+    public Instant getSubmittedAt() {
+        return this.submittedAt;
     }
 
     public Student getFounder() {

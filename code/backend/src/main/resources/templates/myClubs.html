@@ -8,19 +8,25 @@
 </head>
 <body>
     <header th:replace="~{fragments/nav :: header}"></header>
-    <!--/* Plain page from the back end (FR-002.7), Daniel styles it in FR-002.8.
-         Keep the model attribute and links: they are fixed in specs/features/club-registration/design.md */-->
+    <!--/* My Club Requests (FR-002.8). Keep the model attribute and links: they are fixed in
+         specs/features/club-registration/design.md */-->
     <section>
         <h1>My Club Requests</h1>
-        <div th:if="${#lists.isEmpty(clubs)}">
+        <p class="hint">Clubs you registered, newest first.</p>
+        <!--/* Empty state: no clubs registered yet (FR-002-07) */-->
+        <div class="empty-state" th:if="${#lists.isEmpty(clubs)}">
             <p>No club requests yet.</p>
-            <a th:href="@{/clubForm}">Register a club</a>
+            <a class="button-link" th:href="@{/clubForm}">Register a club</a>
         </div>
         <!--/* ${clubs} holds only the signed-in student's clubs, newest first (FR-002-07) */-->
-        <ul th:unless="${#lists.isEmpty(clubs)}">
-            <li th:each="club : ${clubs}">
-                <a th:href="@{/clubs/{id}(id=${club.clubID})}" th:text="${club.clubName}">Club Name</a>
-                - <span th:text="${club.status.status}">Pending</span>
+        <ul class="request-list" th:unless="${#lists.isEmpty(clubs)}">
+            <li class="request" th:each="club : ${clubs}">
+                <div>
+                    <a class="request-name" th:href="@{/clubs/{id}(id=${club.clubID})}" th:text="${club.clubName}">Club Name</a>
+                    <span class="request-area" th:text="${club.areaOfInterest.area}">Area</span>
+                </div>
+                <span class="status-badge" th:classappend="${'status-' + #strings.toLowerCase(club.status.name())}"
+                      th:text="${club.status.status}">Pending</span>
             </li>
         </ul>
     </section>

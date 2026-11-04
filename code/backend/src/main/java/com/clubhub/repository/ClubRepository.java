@@ -41,4 +41,6 @@ public interface ClubRepository extends CrudRepository<Club, Long> {
         @Param("keyword") String keyword,
         @Param("area") AreaOfInterest area
     );
+    // Registration: true if a club already has this name, ignoring capitalization (FR-002.6)
+    boolean existsByClubNameIgnoreCase(String clubName);
 }

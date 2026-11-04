@@ -18,20 +18,20 @@
 - [ ] Tell Tirth that `ClubRegistrationTest`, from TEST-010, changed
 
 ### FR-002.8 Front End: Confirmation and My Club Requests (#58, Daniel)
-- [ ] `club.html`: style the success message from FR-002.7, keeping `registered` and the link
-- [ ] `myClubs.html`: style the list and the empty state, keeping the model attribute `clubs` and the links
+- [x] `club.html`: style the success message from FR-002.7, keeping `registered` and the link
+- [x] `myClubs.html`: style the list and the empty state, keeping the model attribute `clubs` and the links
 
 ### Coordination with other features
 - [x] FR-010.1 (#49): merged in PR #75, and `main` is merged into this branch. This branch's pull request targets `main`
 - [ ] FR-002.6 (#52, Daniel): adds fields and checks to `ClubForm`, `ClubController.clubFormSubmit`, `clubForm.html` and `club.html`, the same places this feature changes. Agree which merges first. The other one merges `main` in and keeps both changes
 - [x] FR-006.1 (#56, Yohann): merged in PR #79. `clubForm.html` and `club.html` have the shared header, and `myClubs.html` has it too
-- [ ] Header link to My Club Requests (Yohann's `fragments/nav.html`): today the only way to reach the page is the link in the success message
+- [x] Header link to My Club Requests (`fragments/nav.html`): "My Club Requests" for signed-in students, also listed on the home page (FR-006-02). Added in FR-002.8
 - [ ] TEST-012 (#61, Daniel): `@WithMockStudent` has no saved profile, so `/clubForm` and `/clubs/mine` refuse it with HTTP 403. Checks of those pages sign in with `with(user(new StudentPrincipal(savedStudent)))`
 - [ ] FR-009.1 (#62, Sprint 3): when pending clubs are hidden from other students, keep showing a pending club to its founder ("Submitter can view their pending club")
 
 ### Tests
-- [ ] `validation.md` for this folder (TEST-012, #61, Daniel)
-- [ ] Automated tests from `validation.md` (TEST-012, #61, Daniel)
+- [x] `validation.md` for this folder (TEST-012, #61, Daniel)
+- [x] Automated tests from `validation.md` (TEST-012, #61, Daniel)
 
 ## Files to Create or Modify
 

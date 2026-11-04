@@ -95,7 +95,7 @@ public class ClubSearchByAreaTest {
         createTestClub("Different Area Club", otherArea, founder);
 
         // Act and assert: simulate searching by area on the website.
-        mockMvc.perform(get("/clubs/search/area")
+        mockMvc.perform(get("/clubs/search/filter")
                         .param("area", areaToSearch.name()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("clubs"))
@@ -137,7 +137,7 @@ public class ClubSearchByAreaTest {
         createTestClub("Photography Club", areaWithClubs, founder);
 
         // Act and assert: search the area with no clubs.
-        mockMvc.perform(get("/clubs/search/area")
+        mockMvc.perform(get("/clubs/search/filter")
                     .param("area", emptyArea.name()))
             .andExpect(status().isOk())
             .andExpect(view().name("clubs"))
@@ -146,6 +146,33 @@ public class ClubSearchByAreaTest {
                     not(containsString("Chess Club"))))
             .andExpect(content().string(
                     not(containsString("Photography Club"))));
+    }
+
+    @Test
+    public void searchByKeywordAndAreaDisplaysMatchingClubs() throws Exception {
+
+        Student founder = createTestStudent("87654323");
+
+        AreaOfInterest area = AreaOfInterest.values()[0];
+
+        AreaOfInterest otherArea = AreaOfInterest.values()[1];
+
+        createTestClub("Chess Club", area, founder);
+        createTestClub("Photography Club", area, founder);
+        createTestClub("Chess Society", otherArea, founder);
+
+        mockMvc.perform(get("/clubs/search/filter")
+                .param("keyword", "Chess")
+                .param("area", area.name()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("clubs"))
+            .andExpect(model().attributeExists("clubs"))
+            .andExpect(content().string(
+                    containsString("Chess Club")))
+            .andExpect(content().string(
+                    not(containsString("Photography Club"))))
+            .andExpect(content().string(
+                    not(containsString("Chess Society"))));
     }
 
 }

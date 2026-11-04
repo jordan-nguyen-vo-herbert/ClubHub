@@ -83,8 +83,8 @@ public class ClubSearchByNameTest {
         createTestClub("Photography Club", area, founder);
 
         // Act and assert: search for clubs containing "Chess".
-        mockMvc.perform(get("/clubs/search/name")
-                        .param("name", "Chess"))
+        mockMvc.perform(get("/clubs/search/filter")
+                    .param("keyword", "Chess"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("clubs"))
                 .andExpect(model().attributeExists("clubs"))
@@ -116,8 +116,8 @@ public class ClubSearchByNameTest {
         createTestClub("Photography Club", area, founder);
 
         // Act and assert: search using lowercase "chess".
-        mockMvc.perform(get("/clubs/search/name")
-                    .param("name", "chess"))
+        mockMvc.perform(get("/clubs/search/filter")
+                    .param("keyword", "chess"))
             .andExpect(status().isOk())
             .andExpect(view().name("clubs"))
             .andExpect(model().attributeExists("clubs"))

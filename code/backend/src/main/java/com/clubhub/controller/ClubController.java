@@ -236,7 +236,7 @@ public class ClubController {
         ClubRole role = membership.get().getRole();
         return role != ClubRole.REGULARMEMBER;
     }
-    @GetMapping("/clubs/{clubID}/manage")
+    @GetMapping("/clubs/{clubID}/members")
     public String manageMembers(
         @PathVariable Long clubID,
         @AuthenticationPrincipal StudentPrincipal principal,
@@ -262,7 +262,7 @@ public class ClubController {
 
         return "clubMembers";
     }
-    @PostMapping("/clubs/{clubID}/manage/add")
+    @PostMapping("/clubs/{clubID}/members")
     public String addMember(
         @PathVariable Long clubID,
         @RequestParam(required = false) String studentNumber,

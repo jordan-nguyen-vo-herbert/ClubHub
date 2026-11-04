@@ -254,7 +254,7 @@ public class NavigationValidationTest {
                 page("/clubs/" + club.getClubID(), student),
                 page("/students/" + student.getId(), student),
                 errorPage(404, "/clubs/abc/xyz", student).andReturn().getResponse().getContentAsString(),
-                errorPage(400, "/clubs/search/area", student).andReturn().getResponse().getContentAsString(),
+                errorPage(400, "/clubs/search/filter", student).andReturn().getResponse().getContentAsString(),
                 page("/studentForm", null),
                 page("/login", null));
 
@@ -328,9 +328,9 @@ public class NavigationValidationTest {
     public void badRequestShowsTheGeneralErrorPage() throws Exception {
         Student student = saveButch();
 
-        mockMvc.perform(getAs("/clubs/search/area?area=NOT_AN_AREA", student)).andExpect(status().isBadRequest());
+        mockMvc.perform(getAs("/clubs/search/filter?area=NOT_AN_AREA", student)).andExpect(status().isBadRequest());
 
-        String page = errorPage(400, "/clubs/search/area", student)
+        String page = errorPage(400, "/clubs/search/filter", student)
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
         assertThat(section(page)).contains("400", HOME_LINK, "Back to home");

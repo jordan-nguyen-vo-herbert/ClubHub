@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Pending requests - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <header th:replace="~{fragments/nav :: header}"></header>
+    <!--/* Pending requests on their own (GET /clubs/{id}/requests), officers only
+         The member management page shows the same list, Accept and Reject send the officer back there */-->
+    <section>
+        <h1>Pending requests</h1>
+        <p class="hint">
+            <span th:text="${club.clubName}">Chess Club</span>
+            &middot; <a th:href="@{/clubs/{id}/members(id=${club.clubID})}">Manage members</a>
+        </p>
+        <div th:replace="~{fragments/members :: pendingRequests(${club}, ${requests})}"></div>
+    </section>
+</body>
+</html>

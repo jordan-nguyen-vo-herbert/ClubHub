@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Manage members - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <header th:replace="~{fragments/nav :: header}"></header>
+    <!--/* Member management page (FR-004.2), officers only: ClubController.manageMembers refuses anyone else with 403
+         Model: ${club} (Club), ${members} (Member list), ${requests} (pending MembershipRequests)
+         After an action, ClubController sends one of ${success}, ${error} or ${addError} (with ${studentNumber}) */-->
+    <section>
+        <h1>Manage members</h1>
+        <p class="hint">
+            <span th:text="${club.clubName}">Chess Club</span>
+            &middot; <a th:href="@{/clubs/{id}(id=${club.clubID})}">Back to the club page</a>
+        </p>
+
+        <!--/* Result of the last add, remove, accept or reject */-->
+        <div class="success" role="status" th:if="${success}" th:text="${success}">Member successfully added!</div>
+        <p class="alert" role="alert" th:if="${error}" th:text="${error}">This request has already been processed.</p>
+
+        <h2>Add a member</h2>
+        <div class="card">
+            <form th:action="@{/clubs/{id}/members(id=${club.clubID})}" method="post">
+                <div>
+                    <label for="studentNumber">WSU ID</label>
+                    <!--/* ${studentNumber} is what the officer typed, only sent back after an error */-->
+                    <input type="text" id="studentNumber" name="studentNumber" th:value="${studentNumber}"
+                           placeholder="e.g. 011111111" />
+                    <!--/* Blank WSU ID, no student with that WSU ID, or already a member (FR-004-02) */-->
+                    <p class="error" th:if="${addError}" th:text="${addError}">Please enter a WSU ID.</p>
+                </div>
+                <button type="submit">Add Member</button>
+            </form>
+        </div>
+
+        <h2>Members (<span th:text="${#lists.size(members)}">0</span>)</h2>
+        <p class="empty-state" th:if="${#lists.isEmpty(members)}">No members yet.</p>
+        <ul class="request-list" th:unless="${#lists.isEmpty(members)}">
+            <li class="request" th:each="member : ${members}">
+                <div>
+                    <a class="request-name" th:href="@{/students/{id}(id=${member.student.id})}"
+                       th:text="${member.student.firstName} + ' ' + ${member.student.lastName}">First Last</a>
+                    <span class="request-area">
+                        WSU ID <span th:text="${member.student.studentNumber}">011111111</span>
+                        &middot; <span th:text="${member.role.role}">President</span>
+                    </span>
+                </div>
+                <!--/* No Remove button on the officer's own row, so they can't lock themselves out of this page */-->
+                <form th:unless="${member.student.id == #authentication.principal.studentId}"
+                      th:action="@{/clubs/{clubID}/manage/remove/{memberID}(clubID=${club.clubID}, memberID=${member.memberID})}"
+                      method="post">
+                    <button type="submit" class="small secondary">Remove</button>
+                </form>
+                <span class="request-area" th:if="${member.student.id == #authentication.principal.studentId}">You</span>
+            </li>
+        </ul>
+
+        <!--/* Officers see pending requests on this page (FR-004-04) */-->
+        <div th:replace="~{fragments/members :: pendingRequests(${club}, ${requests})}"></div>
+    </section>
+</body>
+</html>

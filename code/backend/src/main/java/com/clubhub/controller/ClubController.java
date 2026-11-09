@@ -61,11 +61,29 @@ public class ClubController {
 
     // tells Springboot that this is the method associated with GET request
     @GetMapping("/clubs/{clubID}")
-    public String clubPage(@PathVariable Long clubID, Model model) {
+    public String clubPage(@PathVariable Long clubID, @AuthenticationPrincipal StudentPrincipal principal, Model model) {
         // No match -> HTTP 404, Spring shows templates/error/404.html
         Club match = clubRepository.findById(clubID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Club not found"));
         model.addAttribute("club", toClubResponse(match)); // available in the template as ${club}
+
+        // Where the signed-in student stands with this club, so club.html shows the right button (FR-004.2):
+        // "Request to Join" for a non-member, "Request sent" while a request is pending, "Manage members" for officers
+        boolean isMember = false;
+        boolean isOfficer = false;
+        boolean hasPendingRequest = false;
+        // A test user from @WithMockStudent has no database ID, so it counts as a non-member
+        Long viewerID = (principal == null) ? null : principal.getStudentId();
+        Optional<Student> viewer = (viewerID == null) ? Optional.empty() : studentRepository.findById(viewerID);
+        if (viewer.isPresent()) {
+            isMember = memberRepository.findByStudentAndClub(viewer.get(), match).isPresent();
+            isOfficer = isClubOfficer(clubID, viewerID); // the same officer check the member actions use (NFR-004-01)
+            hasPendingRequest = membershipRequestRepository
+                    .findByStudentAndClubAndStatus(viewer.get(), match, RequestStatus.PENDING).isPresent();
+        }
+        model.addAttribute("isMember", isMember);
+        model.addAttribute("isOfficer", isOfficer);
+        model.addAttribute("hasPendingRequest", hasPendingRequest);
         return "club"; // renders templates/club.html
     }
 
@@ -256,9 +274,13 @@ public class ClubController {
                 HttpStatus.NOT_FOUND, "Club not found"));
 
         List<Member> members = memberRepository.findByClub(club);
+        // Pending requests go on this page too, so officers handle members and requests in one place (FR-004.2)
+        List<MembershipRequest> requests =
+            membershipRequestRepository.findByClubAndStatus(club, RequestStatus.PENDING);
 
         model.addAttribute("club", club);
         model.addAttribute("members", members);
+        model.addAttribute("requests", requests);
 
         return "clubMembers";
     }
@@ -276,9 +298,10 @@ public class ClubController {
             throw new ResponseStatusException(
             HttpStatus.FORBIDDEN, "You are not authorized to manage this club");
         }
+        // Add errors use "addError", not "error", so clubMembers.html shows them next to the WSU ID field,
+        // and "studentNumber" sends back what the officer typed so it stays in the field (FR-004.2)
         if (studentNumber == null || studentNumber.isBlank()) {
-            redirectAttributes.addFlashAttribute("error", "Please enter a WSU ID.");
-            return "redirect:/clubs/" + clubID + "/manage";
+            return addMemberError(clubID, studentNumber, "Please enter a WSU ID.", redirectAttributes);
         }
         Club club = clubRepository.findById(clubID)
             .orElseThrow(() -> new ResponseStatusException(
@@ -288,18 +311,24 @@ public class ClubController {
             .orElse(null);
 
         if (student == null) {
-            redirectAttributes.addFlashAttribute("error", "No student found with that WSU ID.");
-            return "redirect:/clubs/" + clubID + "/manage";
+            return addMemberError(clubID, studentNumber, "No student found with that WSU ID.", redirectAttributes);
         }
         if (memberRepository.findByStudentAndClub(student, club).isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "This student is already a member.");
-            return "redirect:/clubs/" + clubID + "/manage";
+            return addMemberError(clubID, studentNumber, "This student is already a member.", redirectAttributes);
         }
         club.addMember(student, ClubRole.REGULARMEMBER);
         clubRepository.save(club);
         redirectAttributes.addFlashAttribute("success", "Member successfully added!");
-        return "redirect:/clubs/" + clubID + "/manage";
+        return "redirect:/clubs/" + clubID + "/members";
     }
+    // Sends the officer back to the member management page with the error under the WSU ID field
+    // and the WSU ID they typed still in it
+    private String addMemberError(Long clubID, String studentNumber, String message, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("addError", message);
+        redirectAttributes.addFlashAttribute("studentNumber", studentNumber);
+        return "redirect:/clubs/" + clubID + "/members";
+    }
+
     @PostMapping("/clubs/{clubID}/manage/remove/{memberID}")
     public String removeMember(
         @PathVariable Long clubID,
@@ -329,7 +358,7 @@ public class ClubController {
         }
         memberRepository.delete(member);
         redirectAttributes.addFlashAttribute("success", "Member successfully removed!");
-        return "redirect:/clubs/" + clubID + "/manage";
+        return "redirect:/clubs/" + clubID + "/members";
     }
     @PostMapping("/clubs/{clubID}/request")
     public String requestToJoin(
@@ -429,7 +458,7 @@ public class ClubController {
             redirectAttributes.addFlashAttribute(
             "error", "This request has already been processed.");
 
-            return "redirect:/clubs/" + clubID + "/requests";
+            return "redirect:/clubs/" + clubID + "/members"; // the member page lists the requests
         }
         // Make sure the student isn't already a member
         if (memberRepository.findByStudentAndClub(
@@ -442,7 +471,7 @@ public class ClubController {
         membershipRequestRepository.save(request);
         redirectAttributes.addFlashAttribute(
         "success", "Membership request accepted!");
-        return "redirect:/clubs/" + clubID + "/requests";
+        return "redirect:/clubs/" + clubID + "/members"; // the member page lists the requests
     }
     @PostMapping("/clubs/{clubID}/requests/{requestID}/reject")
     public String rejectRequest(
@@ -474,7 +503,7 @@ public class ClubController {
             redirectAttributes.addFlashAttribute(
             "error", "This request has already been processed.");
 
-            return "redirect:/clubs/" + clubID + "/requests";
+            return "redirect:/clubs/" + clubID + "/members"; // the member page lists the requests
         }
 
         request.reject();
@@ -483,6 +512,6 @@ public class ClubController {
         redirectAttributes.addFlashAttribute(
         "success", "Membership request rejected.");
 
-        return "redirect:/clubs/" + clubID + "/requests";
+        return "redirect:/clubs/" + clubID + "/members"; // the member page lists the requests
     }
 }

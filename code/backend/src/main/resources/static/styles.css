@@ -261,3 +261,44 @@ button.full-width {
     font-size: 0.95rem;
     color: #555;
 }
+
+/* Member management (clubMembers.html, membershipRequests.html, club.html), FR-004.2
+   The member and request rows reuse .request-list and .request from My Club Requests */
+
+/* Buttons on the club page: "Manage members" for officers, "Request to Join" for non-members */
+.club-actions {
+    margin: 20px 0 24px;
+}
+
+.club-actions .hint {
+    margin: 0;
+}
+
+/* Accept and Reject side by side at the end of a request row */
+.row-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.request form {
+    margin: 0;
+}
+
+/* A smaller button that sits inside a row, such as Remove or Accept */
+button.small {
+    display: inline-block;
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+}
+
+/* A white button with a crimson border, for the less common or undoing action (Remove, Reject) */
+button.secondary {
+    border: 1px solid #981e32;
+    background-color: #fff;
+    color: #981e32;
+}
+
+button.secondary:hover {
+    background-color: #fdecee;
+}

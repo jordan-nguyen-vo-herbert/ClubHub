@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!--/* Pending requests to join a club, with Accept and Reject for each (FR-004-04)
+         Shared by clubMembers.html and membershipRequests.html:
+         <div th:replace="~{fragments/members :: pendingRequests(${club}, ${requests})}"></div>
+         club is the Club entity, requests the club's PENDING MembershipRequests from ClubController */-->
+    <div th:fragment="pendingRequests(club, requests)">
+        <h2>Pending requests (<span th:text="${#lists.size(requests)}">0</span>)</h2>
+        <p class="empty-state" th:if="${#lists.isEmpty(requests)}">No pending requests.</p>
+        <ul class="request-list" th:unless="${#lists.isEmpty(requests)}">
+            <li class="request" th:each="request : ${requests}">
+                <div>
+                    <a class="request-name" th:href="@{/students/{id}(id=${request.student.id})}"
+                       th:text="${request.student.firstName} + ' ' + ${request.student.lastName}">First Last</a>
+                    <span class="request-area">
+                        WSU ID <span th:text="${request.student.studentNumber}">011111111</span>
+                        &middot; requested <span th:text="${#dates.format(request.requestDate, 'MMM d, yyyy')}">Nov 8, 2026</span>
+                    </span>
+                </div>
+                <!--/* Each button is its own POST form, th:action adds the CSRF token (FR-010) */-->
+                <div class="row-actions">
+                    <form th:action="@{/clubs/{clubID}/requests/{requestID}/accept(clubID=${club.clubID}, requestID=${request.id})}" method="post">
+                        <button type="submit" class="small">Accept</button>
+                    </form>
+                    <form th:action="@{/clubs/{clubID}/requests/{requestID}/reject(clubID=${club.clubID}, requestID=${request.id})}" method="post">
+                        <button type="submit" class="small secondary">Reject</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

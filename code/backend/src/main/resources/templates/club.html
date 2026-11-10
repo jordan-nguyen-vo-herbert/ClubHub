@@ -15,6 +15,9 @@
             Your club registration was submitted and is waiting for approval.
             <a th:href="@{/clubs/mine}">View My Club Requests</a>
         </div>
+        <!--/* Result of "Request to Join": request sent, already a member, or a request already pending (FR-004-04) */-->
+        <div class="success" role="status" th:if="${success}" th:text="${success}">Your membership request has been submitted!</div>
+        <p class="alert" role="alert" th:if="${error}" th:text="${error}">You already have a pending request for this club.</p>
         <h1 th:text="${club.clubName}">Club Name</h1>
         <ul>
             <li>Area of interest: <span th:text="${club.areaOfInterest.area}">Area</span></li>
@@ -29,6 +32,16 @@
             <li>Faculty advisor: <span th:text="${club.facultyAdvisor} ?: 'Not provided'">Dr. Advisor</span></li>
             <li th:if="${club.contactEmail}">Contact: <a th:href="'mailto:' + ${club.contactEmail}" th:text="${club.contactEmail}">club@wsu.edu</a></li>
         </ul>
+        <!--/* What the signed-in student can do here (FR-004.2). ${isMember}, ${isOfficer} and ${hasPendingRequest}
+             come from ClubController.clubPage, the server still checks every action itself (NFR-004-01) */-->
+        <div class="club-actions">
+            <a class="button-link" th:if="${isOfficer}" th:href="@{/clubs/{id}/members(id=${club.clubID})}">Manage members</a>
+            <form th:if="${!isMember and !hasPendingRequest}" th:action="@{/clubs/{id}/request(id=${club.clubID})}" method="post">
+                <button type="submit">Request to Join</button>
+            </form>
+            <p class="hint" th:if="${hasPendingRequest}">Request sent, waiting for an officer to accept it.</p>
+            <p class="hint" th:if="${isMember and !isOfficer}">You are a member of this club.</p>
+        </div>
         <h2>Members</h2>
         <p th:if="${#lists.isEmpty(club.members)}">No members yet.</p>
         <!--/* Each member links to their student profile */-->

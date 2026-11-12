@@ -4,6 +4,7 @@ package com.clubhub.StudentTests;
 import java.util.List;
 
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 /**
  * Provides sample student data and builds requests for student form tests.
  */
+@ActiveProfiles("test")
 public class SampleStudents {
 
     /**

@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.clubhub.support.WithMockStudent;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles("test")
 @WithMockStudent // club pages need a signed-in student (FR-010-05), signed in as a test student so the header can show their first name
 public class ClubPageTest {
 

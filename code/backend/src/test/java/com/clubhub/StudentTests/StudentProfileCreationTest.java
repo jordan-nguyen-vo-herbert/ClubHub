@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.clubhub.support.WithMockStudent;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 
 import static com.clubhub.StudentTests.SampleStudents.submit;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @WithMockStudent // profile pages need a signed-in student (FR-010-05), signed in as a test student so the header can show their first name
+@ActiveProfiles("test")
 public class StudentProfileCreationTest {
 
     @Autowired

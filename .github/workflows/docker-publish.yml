@@ -1,0 +1,50 @@
+name: Build and Publish ClubHub Image
+
+on:
+  push:
+    branches: [ main, docker-assignment ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: code/backend
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run tests
+        run: ./mvnw -B test
+
+  image:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          context: code/backend
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/clubhub:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/clubhub:${{ github.sha }}

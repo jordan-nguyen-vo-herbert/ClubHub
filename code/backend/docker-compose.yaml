@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: clubhub-postgres
+
+    environment:
+      POSTGRES_DB: clubhub
+      POSTGRES_USER: clubhub
+      POSTGRES_PASSWORD: clubhub_local_only
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - clubhub-postgres-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clubhub -d clubhub"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    restart: unless-stopped
+
+volumes:
+  clubhub-postgres-data:

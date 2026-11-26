@@ -12,7 +12,7 @@
 - [x] `messages.properties`: `typeMismatch.category` for a category that isn't in the list (FR-008-06)
 - [x] `feedback.html`: a plain page wired to the fixed names in `design.md`, with the header, the confirmation, both fields with their errors, and the "Send feedback" button
 - [x] White-box tests for each FR-008.1 scenario (`FeedbackBackEndTest`), with `@ActiveProfiles("test")` so they run on H2, not the local PostgreSQL
-- [ ] Check by hand against the local PostgreSQL (`docker compose up -d`): send feedback, send an empty form, send a long message, open `/feedback` signed out, and confirm the row in the `feedback` table
+- [x] Check by hand against the local PostgreSQL (`docker compose up -d`): send feedback, send an empty form, send a long message, open `/feedback` signed out, and confirm the row in the `feedback` table
 
 ### FR-008.2 Front End: Feedback form (#65, TBD)
 - [ ] `feedback.html`: style the plain page from FR-008.1, keeping its field names, messages and links, and mark the required fields

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Send Feedback - ClubHub</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <header th:replace="~{fragments/nav :: header}"></header>
+    <!--/* Plain page from the feedback back end (FR-008.1), styled in FR-008.2.
+         Keep the field names, URL and messages: they are fixed in specs/features/feedback/design.md */-->
+    <section>
+        <h1>Send Feedback</h1>
+        <p class="hint">Report a problem or suggest an improvement. The ClubHub team reads every message.</p>
+        <!--/* Only right after sending feedback, a flash attribute lasts for one page view (FR-008-03) */-->
+        <div class="success" role="status" th:if="${feedbackSent}">Thanks, your feedback was received.</div>
+        <!--/* th:object binds the form to ${feedbackForm}, each *{field} must match a field in FeedbackForm.java
+             th:action adds the hidden CSRF token */-->
+        <form th:action="@{/feedback}" th:object="${feedbackForm}" method="post">
+            <div>
+                <label for="category">Category</label>
+                <select th:field="*{category}" required>
+                    <option value="">-- Select --</option>
+                    <option th:each="c : ${categoryOptions}" th:value="${c}" th:text="${c.category}">Bug report</option>
+                </select>
+                <!--/* Not chosen, or not one of the listed categories (FR-008-04, FR-008-06) */-->
+                <p class="error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">Category error</p>
+            </div>
+            <div>
+                <label for="message">Message</label>
+                <!--/* maxlength matches FeedbackController.MAX_MESSAGE_LENGTH, the server checks it too (NFR-008-02) */-->
+                <textarea th:field="*{message}" rows="6" maxlength="1000" required></textarea>
+                <!--/* Empty, or longer than 1000 characters (FR-008-04, FR-008-05) */-->
+                <p class="error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}">Message error</p>
+            </div>
+            <button type="submit">Send feedback</button>
+        </form>
+    </section>
+</body>
+</html>

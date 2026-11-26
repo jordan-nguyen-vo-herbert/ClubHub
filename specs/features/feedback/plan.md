@@ -3,16 +3,16 @@
 ## Tasks
 
 ### FR-008.1 Back End: Feedback (#64, Yohann)
-- [ ] `FeedbackCategory`: `BUG_REPORT`, `SUGGESTION` and `OTHER`, each with the name the form shows
-- [ ] `Feedback`: category, message (up to 1000 characters), the sending student and the time sent, set when it's created
-- [ ] `FeedbackRepository`: `CrudRepository<Feedback, Long>`, plus `findAllByOrderBySubmittedAtDesc()` for reviewing
-- [ ] `FeedbackForm`: the `category` and `message` fields, with no sender field (NFR-008-01)
-- [ ] `FeedbackController`: `GET /feedback` shows the form with `${categoryOptions}`. `POST /feedback` runs `checkFeedback`, shows the form again on errors, and otherwise stores the feedback and redirects to `/feedback` with `feedbackSent`
-- [ ] `checkFeedback`: a missing category, an empty or blank message, and a message over 1000 characters, each attached to its field (FR-008-04, FR-008-05)
-- [ ] `messages.properties`: `typeMismatch.category` for a category that isn't in the list (FR-008-06)
-- [ ] `feedback.html`: a plain page wired to the fixed names in `design.md`, with the header, the confirmation, both fields with their errors, and the "Send feedback" button
-- [ ] White-box tests for each FR-008.1 scenario (`FeedbackBackEndTest`)
-- [ ] Check by hand: send feedback, send an empty form, send a long message, and open `/feedback` signed out
+- [x] `FeedbackCategory`: `BUG_REPORT`, `SUGGESTION` and `OTHER`, each with the name the form shows
+- [x] `Feedback`: category, message (up to 1000 characters), the sending student and the time sent, set when it's created
+- [x] `FeedbackRepository`: `CrudRepository<Feedback, Long>`, plus `findAllByOrderBySubmittedAtDesc()` for reviewing
+- [x] `FeedbackForm`: the `category` and `message` fields, with no sender field (NFR-008-01)
+- [x] `FeedbackController`: `GET /feedback` shows the form with `${categoryOptions}`. `POST /feedback` runs `checkFeedback`, shows the form again on errors, and otherwise stores the feedback and redirects to `/feedback` with `feedbackSent`
+- [x] `checkFeedback`: a missing category, an empty or blank message, and a message over 1000 characters, each attached to its field (FR-008-04, FR-008-05)
+- [x] `messages.properties`: `typeMismatch.category` for a category that isn't in the list (FR-008-06)
+- [x] `feedback.html`: a plain page wired to the fixed names in `design.md`, with the header, the confirmation, both fields with their errors, and the "Send feedback" button
+- [x] White-box tests for each FR-008.1 scenario (`FeedbackBackEndTest`), with `@ActiveProfiles("test")` so they run on H2, not the local PostgreSQL
+- [ ] Check by hand against the local PostgreSQL (`docker compose up -d`): send feedback, send an empty form, send a long message, open `/feedback` signed out, and confirm the row in the `feedback` table
 
 ### FR-008.2 Front End: Feedback form (#65, TBD)
 - [ ] `feedback.html`: style the plain page from FR-008.1, keeping its field names, messages and links, and mark the required fields

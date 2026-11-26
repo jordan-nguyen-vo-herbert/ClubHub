@@ -124,5 +124,8 @@ classDiagram
 - **Assumptions:**
   - `SecurityConfig` already sends signed-out visitors to `/login` for every page that isn't public, so `/feedback` needs no security change (FR-008-07).
   - The message is stored without the spaces around it. Spaces and line breaks inside it are kept.
-  - The feedback is stored in the same database as the rest of ClubHub: PostgreSQL locally and once deployed, H2 in the tests.
+  - The feedback is stored in the same database as the rest of ClubHub, and needs no database-specific code. The column types (text up to 1000 characters, the category's name and a timestamp) work the same in PostgreSQL and H2:
+    - **Local PostgreSQL** (`local` profile, `docker compose up -d`): `ddl-auto: update` adds the `feedback` table to the existing database at the next start, with no manual SQL.
+    - **Tests** (H2 in memory): only with `@ActiveProfiles("test")` on the test class, which loads `src/test/resources/application-test.yaml`. Without it, a test would try to reach PostgreSQL and fail in the GitHub workflow.
+    - **Docker image** (`docker` profile): with no database variables it falls back to H2 in memory, so stored feedback is lost on every restart. When deployed, it needs the same `SPRING_DATASOURCE_*` variables as the rest of ClubHub, plus `SPRING_JPA_HIBERNATE_DDL_AUTO=update`, or the `feedback` table is never created.
   - Not in this feature: a page for reviewing feedback (it would need the administrator role from FR-009), replying to feedback, attachments, and anonymous feedback.
